@@ -7,401 +7,358 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  --red: #BE2E1B;
-  --red-h: #a82618;
-  --red-soft: rgba(190,46,27,0.08);
-  --red-border: rgba(190,46,27,0.22);
-  --black: #000000;
-  --ink: #111111;
-  --ink-2: #444;
-  --ink-3: #888;
-  --rule: #e0dbd6;
-  --bg: #F7F4F1;
-  --card: #FFFFFF;
-  --warm: #F2EDE8;
-  --green: #1e6b35;
-  --green-bg: #e8f4ec;
-  --amber: #966000;
-  --amber-bg: #fdf3dc;
-  --blue: #1a4480;
-  --blue-bg: #e8eef8;
-  --serif: 'Playfair Display', Georgia, serif;
-  --sans: 'DM Sans', system-ui, sans-serif;
-  --mono: 'DM Mono', monospace;
-  --r: 6px;
-  --shadow: 0 1px 4px rgba(0,0,0,0.07), 0 4px 16px rgba(0,0,0,0.04);
+  --red:#BE2E1B;--red-h:#a82618;--red-soft:rgba(190,46,27,0.08);--red-border:rgba(190,46,27,0.25);
+  --black:#000;--ink:#111;--ink-2:#444;--ink-3:#888;--rule:#e0dbd6;
+  --bg:#F7F4F1;--card:#fff;--warm:#F2EDE8;
+  --green:#1e6b35;--green-bg:#e8f4ec;
+  --amber:#966000;--amber-bg:#fdf3dc;
+  --blue:#1a4480;--blue-bg:#e8eef8;
+  --sans:'DM Sans',system-ui,sans-serif;
+  --serif:'Playfair Display',Georgia,serif;
+  --mono:'DM Mono',monospace;
+  --r:8px;--rl:12px;
+  --shadow:0 1px 4px rgba(0,0,0,0.07),0 4px 16px rgba(0,0,0,0.04);
 }
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { font-size: 15px; }
-body { font-family: var(--sans); background: var(--bg); color: var(--ink); min-height: 100vh; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{font-size:15px;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:100vh;}
+
+/* ── AUTH SCREEN ── */
+#auth-screen{
+  position:fixed;inset:0;background:var(--black);
+  display:flex;align-items:center;justify-content:center;
+  z-index:1000;flex-direction:column;gap:20px;
+}
+#auth-screen.hidden{display:none;}
+.auth-card{
+  background:var(--card);border-radius:var(--rl);padding:2.5rem 2rem;
+  width:100%;max-width:380px;text-align:center;
+}
+.auth-logo{font-family:var(--serif);font-size:22px;font-weight:700;color:var(--ink);margin-bottom:4px;}
+.auth-dept{font-size:11px;color:var(--red);letter-spacing:.12em;text-transform:uppercase;font-weight:500;margin-bottom:2rem;}
+.auth-desc{font-size:13px;color:var(--ink-3);margin-bottom:1.5rem;line-height:1.6;}
+.google-btn{
+  width:100%;display:flex;align-items:center;justify-content:center;gap:12px;
+  background:#fff;border:1px solid var(--rule);border-radius:var(--r);
+  padding:12px 16px;font-family:var(--sans);font-size:14px;font-weight:500;
+  color:var(--ink);cursor:pointer;transition:all .15s;box-shadow:0 1px 3px rgba(0,0,0,0.1);
+}
+.google-btn:hover{box-shadow:0 2px 8px rgba(0,0,0,0.15);border-color:#ccc;}
+.google-icon{width:20px;height:20px;}
+.auth-err{font-size:13px;color:var(--red);margin-top:10px;min-height:18px;}
+.auth-verse{font-family:var(--serif);font-size:13px;color:#666;font-style:italic;text-align:center;max-width:320px;line-height:1.7;}
 
 /* ── TOPBAR ── */
-#topbar {
-  background: var(--black);
-  color: #fff;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 24px;
-  position: sticky; top: 0; z-index: 200;
-  border-bottom: 2px solid var(--red);
+#topbar{
+  background:var(--black);color:#fff;height:48px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 20px;border-bottom:2px solid var(--red);
+  position:sticky;top:0;z-index:200;
 }
-.tb-left { display: flex; align-items: center; gap: 16px; }
-.tb-logo { font-family: var(--serif); font-size: 17px; font-weight: 700; color: #fff; letter-spacing: 0.01em; }
-.tb-dept { font-family: var(--sans); font-size: 11px; font-weight: 500; color: var(--red); letter-spacing: 0.14em; text-transform: uppercase; }
-.tb-sep { width: 1px; height: 20px; background: #333; }
-.tb-user { font-size: 12px; color: #999; }
-.tb-right { display: flex; align-items: center; gap: 14px; }
-.tb-date { font-family: var(--mono); font-size: 11px; color: #666; }
-.prayer-btn {
-  background: var(--red); color: #fff; border: none; border-radius: 4px;
-  padding: 7px 14px; font-family: var(--sans); font-size: 12px; font-weight: 600;
-  cursor: pointer; letter-spacing: 0.03em; transition: background .15s;
-  display: flex; align-items: center; gap: 6px;
+.tb-l{display:flex;align-items:center;gap:12px;}
+.tb-title{font-family:var(--serif);font-size:16px;font-weight:700;}
+.tb-dept{font-size:11px;color:var(--red);letter-spacing:.1em;text-transform:uppercase;}
+.tb-sep{width:1px;height:18px;background:#333;}
+.tb-user{font-size:12px;color:#aaa;}
+.tb-r{display:flex;align-items:center;gap:10px;}
+.tb-date{font-family:var(--mono);font-size:11px;color:#666;}
+.sign-out-btn{
+  background:transparent;color:#666;border:1px solid #333;
+  border-radius:var(--r);padding:5px 10px;font-size:11px;
+  cursor:pointer;font-family:var(--sans);transition:all .15s;
 }
-.prayer-btn:hover { background: var(--red-h); }
+.sign-out-btn:hover{border-color:#666;color:#aaa;}
 
 /* ── NAV ── */
-#nav {
-  background: var(--card); border-bottom: 1px solid var(--rule);
-  display: flex; align-items: center; padding: 0 24px; gap: 0;
-  position: sticky; top: 48px; z-index: 190;
+#nav{
+  background:var(--card);border-bottom:1px solid var(--rule);
+  display:flex;align-items:center;padding:0 20px;
+  position:sticky;top:48px;z-index:190;
 }
-.nt {
-  font-family: var(--sans); font-size: 12px; font-weight: 600;
-  letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3);
-  padding: 13px 16px 11px; cursor: pointer;
-  border-bottom: 3px solid transparent; transition: all .15s; user-select: none;
+.nt{
+  font-family:var(--sans);font-size:12px;font-weight:600;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);
+  padding:13px 14px 11px;cursor:pointer;
+  border-bottom:3px solid transparent;transition:all .15s;user-select:none;
 }
-.nt:hover { color: var(--ink); }
-.nt.on { color: var(--red); border-bottom-color: var(--red); }
+.nt:hover{color:var(--ink);}
+.nt.on{color:var(--red);border-bottom-color:var(--red);}
 
-/* ── LAYOUT ── */
-#main { max-width: 1100px; margin: 0 auto; padding: 24px; }
-.panel { display: none; }
-.panel.on { display: block; }
+/* ── MAIN ── */
+#main{max-width:1100px;margin:0 auto;padding:24px 20px;}
+.panel{display:none;}
+.panel.on{display:block;}
 
 /* ── TYPOGRAPHY ── */
-.sec-title {
-  font-family: var(--sans); font-size: 10px; font-weight: 600;
-  letter-spacing: 0.2em; text-transform: uppercase; color: var(--red);
-  margin-bottom: 14px; padding-bottom: 7px; border-bottom: 1px solid var(--red-border);
+.sec-title{
+  font-size:10px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--red);margin-bottom:14px;padding-bottom:7px;border-bottom:1px solid var(--red-border);
 }
-.pg-title { font-family: var(--serif); font-size: 26px; font-weight: 700; color: var(--ink); line-height: 1.2; }
-.pg-sub { font-family: var(--sans); font-size: 13px; color: var(--ink-3); margin-top: 3px; font-style: italic; }
+.pg-title{font-family:var(--serif);font-size:26px;font-weight:700;color:var(--ink);line-height:1.2;}
+.pg-sub{font-size:13px;color:var(--ink-3);margin-top:3px;font-style:italic;}
 
 /* ── CARD ── */
-.card { background: var(--card); border: 1px solid var(--rule); border-radius: var(--r); padding: 20px; box-shadow: var(--shadow); margin-bottom: 16px; }
-.card-sm { padding: 14px 16px; }
+.card{background:var(--card);border:1px solid var(--rule);border-radius:var(--r);padding:20px;box-shadow:var(--shadow);margin-bottom:16px;}
 
 /* ── GRIDS ── */
-.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.g3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
-.g4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; }
-@media(max-width:860px) { .g2,.g3,.g4 { grid-template-columns: 1fr; } }
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+@media(max-width:860px){.g2,.g3,.g4{grid-template-columns:1fr;}}
 
-/* ── METRIC CARDS ── */
-.metric {
-  background: var(--card); border: 1px solid var(--rule);
-  border-top: 3px solid var(--red); border-radius: var(--r);
-  padding: 16px 18px; box-shadow: var(--shadow);
+/* ── METRICS ── */
+.metric{
+  background:var(--card);border:1px solid var(--rule);
+  border-top:3px solid var(--red);border-radius:var(--r);
+  padding:16px 18px;box-shadow:var(--shadow);
 }
-.metric-label { font-size: 10px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 6px; }
-.metric-val { font-family: var(--serif); font-size: 36px; font-weight: 700; color: var(--ink); line-height: 1; }
-.metric-note { font-size: 12px; color: var(--ink-3); margin-top: 5px; font-style: italic; }
-.metric.green { border-top-color: var(--green); }
-.metric.amber { border-top-color: var(--amber); }
-.metric.blue { border-top-color: var(--blue); }
+.metric.green{border-top-color:var(--green);}
+.metric.amber{border-top-color:var(--amber);}
+.metric.blue{border-top-color:var(--blue);}
+.metric-label{font-size:10px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);margin-bottom:6px;}
+.metric-val{font-family:var(--serif);font-size:36px;font-weight:700;color:var(--ink);line-height:1;}
+.metric-note{font-size:12px;color:var(--ink-3);margin-top:5px;font-style:italic;}
 
 /* ── PROGRESS ── */
-.prog-wrap { margin: 8px 0; }
-.prog-labels { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 11px; color: var(--ink-3); margin-bottom: 5px; }
-.prog-bar { height: 5px; background: #e8e2dc; border-radius: 3px; overflow: hidden; }
-.prog-fill { height: 100%; background: var(--red); border-radius: 3px; transition: width .5s ease; }
-.prog-fill.green { background: var(--green); }
+.prog-wrap{margin:8px 0;}
+.prog-labels{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--ink-3);margin-bottom:5px;}
+.prog-bar{height:5px;background:#e8e2dc;border-radius:3px;overflow:hidden;}
+.prog-fill{height:100%;background:var(--red);border-radius:3px;transition:width .5s;}
+.prog-fill.green{background:var(--green);}
 
 /* ── PRIORITY CARDS ── */
-.priority-card {
-  background: var(--card); border: 1px solid var(--rule);
-  border-left: 4px solid var(--red); border-radius: var(--r);
-  padding: 16px 18px; box-shadow: var(--shadow); margin-bottom: 12px;
-  transition: box-shadow .15s;
+.priority-card{
+  background:var(--card);border:1px solid var(--rule);
+  border-left:4px solid var(--red);border-radius:var(--r);
+  padding:16px 18px;box-shadow:var(--shadow);margin-bottom:12px;
 }
-.priority-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
-.priority-card.pushed { border-left-color: var(--amber); opacity: 0.7; }
-.priority-card.done-card { border-left-color: var(--green); opacity: 0.6; }
-.pc-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
-.pc-num { font-family: var(--serif); font-size: 28px; font-weight: 700; color: var(--red); line-height: 1; flex-shrink: 0; width: 32px; }
-.pc-num.pushed { color: var(--amber); }
-.pc-body { flex: 1; }
-.pc-title { font-weight: 600; font-size: 15px; color: var(--ink); margin-bottom: 4px; }
-.pc-why {
-  font-size: 13px; color: var(--ink-2); line-height: 1.6; margin-bottom: 10px;
-  padding: 8px 12px; background: var(--warm); border-radius: 4px;
-  border-left: 2px solid var(--red-border);
-  font-style: italic;
-}
-.pc-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-.btn { border: none; border-radius: 4px; padding: 7px 14px; font-family: var(--sans); font-size: 12px; font-weight: 600; cursor: pointer; transition: all .15s; letter-spacing: 0.02em; }
-.btn-red { background: var(--red); color: #fff; }
-.btn-red:hover { background: var(--red-h); }
-.btn-ghost { background: transparent; color: var(--ink-2); border: 1px solid var(--rule); }
-.btn-ghost:hover { border-color: var(--red); color: var(--red); }
-.btn-green { background: var(--green); color: #fff; }
-.btn-green:hover { background: #165928; }
-.btn-sm { padding: 5px 10px; font-size: 11px; }
+.priority-card.pushed{border-left-color:var(--amber);opacity:.75;}
+.pc-header{display:flex;align-items:flex-start;gap:12px;}
+.pc-num{font-family:var(--serif);font-size:28px;font-weight:700;color:var(--red);line-height:1;flex-shrink:0;width:32px;}
+.pc-num.amber{color:var(--amber);}
+.pc-body{flex:1;}
+.pc-title{font-weight:600;font-size:15px;color:var(--ink);margin-bottom:4px;}
+.pc-why{font-size:13px;color:var(--ink-2);line-height:1.6;margin-bottom:10px;padding:8px 12px;background:var(--warm);border-radius:4px;border-left:2px solid var(--red-border);font-style:italic;}
+.pc-actions{display:flex;gap:8px;flex-wrap:wrap;}
 
-/* ── WEEK SELECTOR ── */
-.week-bar {
-  display: flex; align-items: center; justify-content: space-between;
-  background: var(--black); color: #fff; border-radius: var(--r);
-  padding: 12px 18px; margin-bottom: 20px;
-}
-.week-label { font-family: var(--serif); font-size: 15px; font-weight: 600; }
-.week-sub { font-size: 12px; color: #aaa; margin-top: 1px; }
-.week-nav { display: flex; gap: 8px; }
-.week-nav button {
-  background: #222; color: #ccc; border: 1px solid #333; border-radius: 4px;
-  padding: 5px 12px; font-size: 12px; cursor: pointer; transition: all .15s;
-}
-.week-nav button:hover { background: var(--red); color: #fff; border-color: var(--red); }
-.week-nav button.today-btn { background: var(--red); color: #fff; border-color: var(--red); }
+/* ── BUTTONS ── */
+.btn{border:none;border-radius:var(--r);padding:7px 14px;font-family:var(--sans);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;}
+.btn-red{background:var(--red);color:#fff;}
+.btn-red:hover{background:var(--red-h);}
+.btn-ghost{background:transparent;color:var(--ink-2);border:1px solid var(--rule);}
+.btn-ghost:hover{border-color:var(--red);color:var(--red);}
+.btn-green{background:var(--green);color:#fff;}
+.btn-green:hover{background:#165928;}
+.btn-sm{padding:5px 10px;font-size:11px;}
 
-/* ── TAGS / BADGES ── */
-.tag {
-  display: inline-block; font-size: 10px; font-weight: 600; letter-spacing: 0.08em;
-  text-transform: uppercase; padding: 3px 8px; border-radius: 20px;
+/* ── WEEK BAR ── */
+.week-bar{
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--black);color:#fff;border-radius:var(--r);
+  padding:12px 18px;margin-bottom:20px;
 }
-.tag-red { background: var(--red-soft); color: var(--red); }
-.tag-green { background: var(--green-bg); color: var(--green); }
-.tag-amber { background: var(--amber-bg); color: var(--amber); }
-.tag-blue { background: var(--blue-bg); color: var(--blue); }
-.tag-gray { background: #f0ebe6; color: var(--ink-3); }
+.week-label{font-family:var(--serif);font-size:15px;font-weight:600;}
+.week-sub{font-size:12px;color:#aaa;margin-top:1px;}
+.week-nav{display:flex;gap:8px;}
+.week-nav button{
+  background:#222;color:#ccc;border:1px solid #333;
+  border-radius:4px;padding:5px 12px;font-size:12px;cursor:pointer;transition:all .15s;
+}
+.week-nav button:hover{background:var(--red);color:#fff;border-color:var(--red);}
+.week-nav button.today-btn{background:var(--red);color:#fff;border-color:var(--red);}
 
-/* ── QUARTER ROADMAP ── */
-.q-row {
-  display: grid; grid-template-columns: 90px 1fr 120px;
-  gap: 14px; align-items: center; padding: 12px 16px;
-  border-bottom: 1px solid #f0ebe6;
-}
-.q-row:last-child { border-bottom: none; }
-.q-label { font-family: var(--mono); font-size: 11px; font-weight: 500; color: var(--ink-3); }
-.q-label.current { color: var(--red); font-weight: 600; }
-.q-name { font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 2px; }
-.q-desc { font-size: 12px; color: var(--ink-3); line-height: 1.5; }
+/* ── TAGS ── */
+.tag{display:inline-block;font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:20px;}
+.tag-red{background:var(--red-soft);color:var(--red);}
+.tag-green{background:var(--green-bg);color:var(--green);}
+.tag-amber{background:var(--amber-bg);color:var(--amber);}
+.tag-blue{background:var(--blue-bg);color:var(--blue);}
+.tag-gray{background:#f0ebe6;color:var(--ink-3);}
+
+/* ── Q ROADMAP ── */
+.q-row{display:grid;grid-template-columns:90px 1fr 120px;gap:14px;align-items:center;padding:12px 16px;border-bottom:1px solid #f0ebe6;}
+.q-row:last-child{border-bottom:none;}
+.q-lbl{font-family:var(--mono);font-size:11px;color:var(--ink-3);}
+.q-lbl.cur{color:var(--red);font-weight:600;}
+.q-name{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:2px;}
+.q-desc{font-size:12px;color:var(--ink-3);line-height:1.5;}
 
 /* ── GOALS ── */
-.goal-row { padding: 16px 0; border-bottom: 1px solid #f0ebe6; }
-.goal-row:last-child { border-bottom: none; }
-.goal-title { font-weight: 600; font-size: 14px; color: var(--ink); margin-bottom: 8px; }
-.step-list { list-style: none; margin-top: 8px; }
-.step-li {
-  display: flex; align-items: center; gap: 10px;
-  padding: 6px 0; border-bottom: 1px solid #f8f4f0;
-  font-size: 13px; color: var(--ink-2); cursor: pointer;
-  transition: color .15s;
-}
-.step-li:last-child { border-bottom: none; }
-.step-li:hover { color: var(--ink); }
-.step-box {
-  width: 17px; height: 17px; border: 2px solid var(--rule);
-  border-radius: 3px; flex-shrink: 0; display: flex;
-  align-items: center; justify-content: center; transition: all .15s;
-}
-.step-li.done .step-box { background: var(--green); border-color: var(--green); }
-.step-li.done .step-box::after { content: '✓'; font-size: 10px; color: #fff; font-weight: 700; }
-.step-li.done span { text-decoration: line-through; color: var(--ink-3); }
+.goal-row{padding:16px 0;border-bottom:1px solid #f0ebe6;}
+.goal-row:last-child{border-bottom:none;}
+.goal-title{font-weight:600;font-size:14px;color:var(--ink);margin-bottom:8px;}
+.step-list{list-style:none;margin-top:8px;}
+.step-li{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid #f8f4f0;font-size:13px;color:var(--ink-2);cursor:pointer;transition:color .15s;}
+.step-li:last-child{border-bottom:none;}
+.step-li:hover{color:var(--ink);}
+.step-box{width:17px;height:17px;border:2px solid var(--rule);border-radius:3px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.step-li.done .step-box{background:var(--green);border-color:var(--green);}
+.step-li.done .step-box::after{content:'✓';font-size:10px;color:#fff;font-weight:700;}
+.step-li.done span{text-decoration:line-through;color:var(--ink-3);}
 
 /* ── PROJECTS ── */
-.proj-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-.proj-table th {
-  text-align: left; padding: 9px 14px; font-size: 10px; font-weight: 600;
-  letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3);
-  background: var(--warm); border-bottom: 1px solid var(--rule);
-}
-.proj-table td { padding: 12px 14px; border-bottom: 1px solid #f0ebe6; vertical-align: top; }
-.proj-table tr:last-child td { border-bottom: none; }
-.proj-table tr:hover td { background: #faf7f4; }
-.proj-name { font-weight: 600; color: var(--ink); margin-bottom: 3px; }
-.proj-note { font-size: 12px; color: var(--ink-3); line-height: 1.5; }
-.status-sel {
-  border: 1px solid var(--rule); border-radius: 20px; padding: 4px 10px;
-  font-family: var(--sans); font-size: 11px; font-weight: 600; background: var(--card);
-  color: var(--ink-2); cursor: pointer; appearance: none; -webkit-appearance: none;
-}
+.proj-table{width:100%;border-collapse:collapse;font-size:13px;}
+.proj-table th{text-align:left;padding:9px 14px;font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);background:var(--warm);border-bottom:1px solid var(--rule);}
+.proj-table td{padding:12px 14px;border-bottom:1px solid #f0ebe6;vertical-align:top;}
+.proj-table tr:last-child td{border-bottom:none;}
+.proj-table tr:hover td{background:#faf7f4;}
+.proj-name{font-weight:600;color:var(--ink);margin-bottom:3px;}
+.proj-note{font-size:12px;color:var(--ink-3);line-height:1.5;}
+.status-sel{border:1px solid var(--rule);border-radius:20px;padding:4px 10px;font-family:var(--sans);font-size:11px;font-weight:600;background:var(--card);color:var(--ink-2);cursor:pointer;}
 
 /* ── TEAM ── */
-.person-card { background: var(--card); border: 1px solid var(--rule); border-radius: var(--r); overflow: hidden; margin-bottom: 12px; box-shadow: var(--shadow); }
-.person-header {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 13px 16px; background: var(--warm); border-bottom: 1px solid var(--rule);
-  cursor: pointer; user-select: none;
-}
-.person-header:hover { background: #ede7e1; }
-.person-left { display: flex; align-items: center; gap: 12px; }
-.avatar {
-  width: 34px; height: 34px; border-radius: 50%; background: var(--black);
-  color: #fff; font-family: var(--serif); font-size: 14px; font-weight: 700;
-  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-}
-.person-name { font-weight: 600; font-size: 14px; color: var(--ink); }
-.person-title { font-size: 12px; color: var(--ink-3); font-style: italic; }
-.person-right { display: flex; align-items: center; gap: 10px; }
-.checkin-status { font-family: var(--mono); font-size: 11px; color: var(--ink-3); }
-.chevron { font-size: 11px; color: var(--ink-3); transition: transform .2s; }
-.chevron.open { transform: rotate(180deg); }
-.person-body { display: none; padding: 16px; }
-.person-body.open { display: block; }
-.ci-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
-.ci-field label {
-  display: block; font-size: 10px; font-weight: 600; letter-spacing: 0.14em;
-  text-transform: uppercase; color: var(--ink-3); margin-bottom: 5px;
-}
-.ci-field textarea, .ci-field input[type=text] {
-  width: 100%; border: 1px solid var(--rule); border-radius: 4px;
-  padding: 8px 10px; font-family: var(--sans); font-size: 13px; color: var(--ink);
-  background: var(--bg); resize: vertical; min-height: 68px; line-height: 1.5;
-}
-.ci-field input[type=text] { min-height: unset; }
-.ci-field textarea:focus, .ci-field input[type=text]:focus { outline: none; border-color: var(--red); }
-.prayer-row {
-  background: #fff8f6; border: 1px solid var(--red-border); border-radius: 4px;
-  padding: 12px 14px; margin-top: 12px;
-}
-.prayer-row-label { font-size: 10px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--red); margin-bottom: 8px; }
-.prayer-inputs { display: grid; grid-template-columns: 1fr 1fr 2fr; gap: 8px; }
-.prayer-inputs input {
-  border: 1px solid var(--red-border); border-radius: 4px; padding: 7px 9px;
-  font-family: var(--sans); font-size: 12px; background: #fff; color: var(--ink); width: 100%;
-}
-.prayer-inputs input:focus { outline: none; border-color: var(--red); }
-.pi-label { font-size: 9px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--red); margin-bottom: 3px; }
-.save-row { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
-.saved-msg { font-family: var(--mono); font-size: 11px; color: var(--green); opacity: 0; transition: opacity .3s; }
-.saved-msg.show { opacity: 1; }
-.team-divider {
-  font-size: 10px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase;
-  color: #fff; background: var(--black); padding: 6px 12px; border-radius: 3px;
-  margin: 20px 0 10px; display: inline-block;
-}
+.team-divider{font-size:10px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:#fff;background:var(--black);padding:6px 12px;border-radius:3px;margin:20px 0 10px;display:inline-block;}
+.person-card{background:var(--card);border:1px solid var(--rule);border-radius:var(--r);overflow:hidden;margin-bottom:12px;box-shadow:var(--shadow);}
+.person-header{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;background:var(--warm);border-bottom:1px solid var(--rule);cursor:pointer;user-select:none;}
+.person-header:hover{background:#ede7e1;}
+.person-left{display:flex;align-items:center;gap:12px;}
+.avatar{width:34px;height:34px;border-radius:50%;background:var(--black);color:#fff;font-family:var(--serif);font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.person-name{font-weight:600;font-size:14px;color:var(--ink);}
+.person-title{font-size:12px;color:var(--ink-3);font-style:italic;}
+.person-right{display:flex;align-items:center;gap:10px;}
+.ci-status{font-family:var(--mono);font-size:11px;color:var(--ink-3);}
+.ci-status.overdue{color:var(--amber);}
+.chevron{font-size:11px;color:var(--ink-3);transition:transform .2s;}
+.chevron.open{transform:rotate(180deg);}
+.person-body{display:none;padding:16px;}
+.person-body.open{display:block;}
 
-/* ── CORE VALUES ── */
-.cv-rotation {
-  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 20px;
-}
-.cv-slot {
-  background: var(--card); border: 1px solid var(--rule); border-radius: var(--r);
-  padding: 14px 16px; text-align: center; box-shadow: var(--shadow);
-}
-.cv-slot.current { border-top: 3px solid var(--red); }
-.cv-slot.next { border-top: 3px solid var(--amber); }
-.cv-slot.prev { border-top: 3px solid var(--green); opacity: 0.75; }
-.cv-slot-label { font-size: 9px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 6px; }
-.cv-slot.current .cv-slot-label { color: var(--red); }
-.cv-slot-name { font-family: var(--serif); font-size: 18px; font-weight: 700; color: var(--ink); margin-bottom: 2px; }
-.cv-slot-tag { font-size: 11px; color: var(--ink-3); font-style: italic; margin-bottom: 8px; }
-.cv-slot-date { font-family: var(--mono); font-size: 11px; color: var(--ink-3); }
-.cv-all { }
-.cv-item {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 12px 16px; border-bottom: 1px solid #f0ebe6;
-  background: var(--card);
-}
-.cv-item:first-child { border-radius: var(--r) var(--r) 0 0; }
-.cv-item:last-child { border-bottom: none; border-radius: 0 0 var(--r) var(--r); }
-.cv-item.current-cv { background: #fff8f6; }
-.cv-item-left { display: flex; align-items: center; gap: 14px; }
-.cv-idx { font-family: var(--mono); font-size: 12px; color: var(--ink-3); width: 18px; }
-.cv-name-big { font-family: var(--serif); font-size: 16px; font-weight: 700; color: var(--ink); }
-.cv-tagline-sm { font-size: 12px; color: var(--ink-3); font-style: italic; margin-left: 6px; }
-.cv-item-right { display: flex; align-items: center; gap: 10px; }
-.cv-log-btn {
-  background: var(--red); color: #fff; border: none; border-radius: 4px;
-  padding: 6px 12px; font-family: var(--sans); font-size: 11px; font-weight: 600;
-  cursor: pointer; transition: background .15s;
-}
-.cv-log-btn:hover { background: var(--red-h); }
+/* ── CHECK-IN ── */
+.ci-section-label{font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--red);margin-bottom:12px;}
+.ci-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+.ci-field label{display:block;font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);margin-bottom:5px;}
+.ci-field textarea,.ci-field input[type=text]{width:100%;border:1px solid var(--rule);border-radius:var(--r);padding:8px 10px;font-family:var(--sans);font-size:13px;color:var(--ink);background:var(--bg);resize:vertical;min-height:68px;line-height:1.5;}
+.ci-field input[type=text]{min-height:unset;}
+.ci-field textarea:focus,.ci-field input[type=text]:focus{outline:none;border-color:var(--red);}
+.save-row{display:flex;align-items:center;gap:10px;margin-top:12px;}
+.saved-msg{font-family:var(--mono);font-size:11px;color:var(--green);opacity:0;transition:opacity .3s;}
+.saved-msg.show{opacity:1;}
+
+/* ── PRAYER SECTION ── */
+.prayer-box{background:#fff8f6;border:1px solid var(--red-border);border-radius:var(--r);padding:12px 14px;margin-top:14px;}
+.prayer-box-label{font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--red);margin-bottom:8px;}
+.prayer-family-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;}
+.prayer-family-row input{border:1px solid var(--red-border);border-radius:var(--r);padding:7px 9px;font-family:var(--sans);font-size:12px;background:#fff;color:var(--ink);width:100%;}
+.prayer-family-row input:focus{outline:none;border-color:var(--red);}
+.pi-label{font-size:9px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--red);margin-bottom:3px;}
+.prayer-request-field{width:100%;border:1px solid var(--red-border);border-radius:var(--r);padding:8px 10px;font-family:var(--sans);font-size:13px;background:#fff;color:var(--ink);resize:vertical;min-height:58px;line-height:1.5;}
+.prayer-request-field:focus{outline:none;border-color:var(--red);}
+
+/* ── PRAYER REQUESTS SECTION ── */
+.pr-add-bar{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
+.pr-add-bar input,.pr-add-bar select{border:1px solid var(--rule);border-radius:var(--r);padding:8px 10px;font-family:var(--sans);font-size:13px;background:var(--card);color:var(--ink);}
+.pr-add-bar input{flex:1;min-width:160px;}
+.pr-add-bar input:focus,.pr-add-bar select:focus{outline:none;border-color:var(--red);}
+.pr-list{display:grid;gap:10px;}
+.pr-card{background:var(--card);border:1px solid var(--rule);border-radius:var(--r);padding:14px 16px;position:relative;}
+.pr-card.department{border-left:3px solid var(--blue);}
+.pr-card.country{border-left:3px solid var(--red);}
+.pr-card.staff{border-left:3px solid var(--green);}
+.pr-card.other{border-left:3px solid #999;}
+.pr-top{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.pr-title{font-size:14px;font-weight:600;color:var(--ink);flex:1;}
+.pr-cat{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:20px;}
+.pr-cat.department{background:var(--blue-bg);color:var(--blue);}
+.pr-cat.country{background:var(--red-soft);color:var(--red);}
+.pr-cat.staff{background:var(--green-bg);color:var(--green);}
+.pr-cat.other{background:var(--warm);color:var(--ink-3);}
+.pr-notes{width:100%;border:1px solid var(--rule);border-radius:var(--r);padding:8px 10px;font-family:var(--sans);font-size:13px;color:var(--ink);background:var(--bg);resize:vertical;min-height:54px;line-height:1.5;}
+.pr-notes:focus{outline:none;border-color:var(--red);}
+.pr-date{font-size:11px;color:var(--ink-3);font-style:italic;margin-top:5px;}
+.pr-del{position:absolute;top:12px;right:14px;background:none;border:none;cursor:pointer;color:var(--ink-3);font-size:18px;line-height:1;}
+.pr-del:hover{color:var(--red);}
+.pr-prayed-btn{margin-top:8px;padding:6px 12px;font-size:12px;font-weight:600;border-radius:var(--r);border:1px solid var(--rule);cursor:pointer;background:var(--card);color:var(--ink-2);display:inline-flex;align-items:center;gap:5px;transition:all .15s;}
+.pr-prayed-btn.done{background:var(--green-bg);color:var(--green);border-color:rgba(30,107,53,.3);}
+.empty{font-size:13px;color:var(--ink-3);font-style:italic;padding:1.5rem 0;text-align:center;}
 
 /* ── ADD FORM ── */
-.add-form {
-  display: none; background: var(--warm); border: 1px solid var(--red-border);
-  border-radius: var(--r); padding: 14px 16px; margin-bottom: 14px;
-}
-.add-form.open { display: block; }
-.af-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 10px; align-items: end; margin-bottom: 10px; }
-.af-grid input, .af-grid select {
-  border: 1px solid var(--rule); border-radius: 4px; padding: 8px 10px;
-  font-family: var(--sans); font-size: 13px; background: #fff; color: var(--ink); width: 100%;
-}
-.af-grid input:focus, .af-grid select:focus { outline: none; border-color: var(--red); }
-.af-label { display: block; font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 4px; }
+.add-form{display:none;background:var(--warm);border:1px solid var(--red-border);border-radius:var(--r);padding:14px 16px;margin-bottom:14px;}
+.add-form.open{display:block;}
+.af-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:10px;align-items:end;margin-bottom:10px;}
+.af-grid input,.af-grid select{border:1px solid var(--rule);border-radius:var(--r);padding:8px 10px;font-family:var(--sans);font-size:13px;background:#fff;color:var(--ink);width:100%;}
+.af-grid input:focus,.af-grid select:focus{outline:none;border-color:var(--red);}
+.af-label{display:block;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);margin-bottom:4px;}
+
+/* ── CORE VALUES ── */
+.cv-rotation{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px;}
+.cv-slot{background:var(--card);border:1px solid var(--rule);border-radius:var(--r);padding:14px 16px;text-align:center;box-shadow:var(--shadow);}
+.cv-slot.current{border-top:3px solid var(--red);}
+.cv-slot.next{border-top:3px solid var(--amber);}
+.cv-slot.prev{border-top:3px solid var(--green);opacity:.75;}
+.cv-slot-label{font-size:9px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-3);margin-bottom:6px;}
+.cv-slot.current .cv-slot-label{color:var(--red);}
+.cv-slot-name{font-family:var(--serif);font-size:18px;font-weight:700;color:var(--ink);margin-bottom:2px;}
+.cv-slot-tag{font-size:11px;color:var(--ink-3);font-style:italic;margin-bottom:8px;}
+.cv-slot-date{font-family:var(--mono);font-size:11px;color:var(--ink-3);}
+.cv-item{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid #f0ebe6;background:var(--card);}
+.cv-item:first-child{border-radius:var(--r) var(--r) 0 0;}
+.cv-item:last-child{border-bottom:none;border-radius:0 0 var(--r) var(--r);}
+.cv-item.current-cv{background:#fff8f6;}
+.cv-item-left{display:flex;align-items:center;gap:14px;}
+.cv-idx{font-family:var(--mono);font-size:12px;color:var(--ink-3);width:18px;}
+.cv-name-big{font-family:var(--serif);font-size:16px;font-weight:700;color:var(--ink);}
+.cv-tagline-sm{font-size:12px;color:var(--ink-3);font-style:italic;margin-left:6px;}
+.cv-item-right{display:flex;align-items:center;gap:10px;}
+.cv-log-btn{background:var(--red);color:#fff;border:none;border-radius:var(--r);padding:6px 12px;font-family:var(--sans);font-size:11px;font-weight:600;cursor:pointer;transition:background .15s;}
+.cv-log-btn:hover{background:var(--red-h);}
 
 /* ── MODAL ── */
-#modal-bg {
-  display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.65);
-  z-index: 500; align-items: center; justify-content: center;
-}
-#modal-bg.open { display: flex; }
-.modal {
-  background: var(--card); border-top: 4px solid var(--red); border-radius: var(--r);
-  padding: 28px 32px; max-width: 580px; width: 92%; max-height: 82vh;
-  overflow-y: auto; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.25);
-}
-.modal-close { position: absolute; top: 12px; right: 14px; background: none; border: none; font-size: 22px; color: var(--ink-3); cursor: pointer; }
-.modal-close:hover { color: var(--red); }
-.modal-title { font-family: var(--serif); font-size: 22px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
-.modal-sub { font-size: 13px; color: var(--ink-3); font-style: italic; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--rule); }
-.prayer-entry { margin-bottom: 18px; }
-.pe-name { font-family: var(--serif); font-size: 16px; font-weight: 700; color: var(--red); margin-bottom: 2px; }
-.pe-title { font-size: 12px; color: var(--ink-3); font-style: italic; margin-bottom: 3px; }
-.pe-family { font-size: 13px; color: var(--ink-2); margin-bottom: 6px; }
-.pe-request {
-  font-size: 14px; color: var(--ink); line-height: 1.65;
-  padding: 9px 13px; background: var(--warm);
-  border-left: 3px solid var(--red); border-radius: 0 4px 4px 0;
-  font-style: italic;
-}
-.pe-empty { color: var(--ink-3); font-style: italic; font-size: 13px; }
+#modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:500;align-items:center;justify-content:center;}
+#modal-bg.open{display:flex;}
+.modal{background:var(--card);border-top:4px solid var(--red);border-radius:var(--r);padding:28px 32px;max-width:580px;width:92%;max-height:82vh;overflow-y:auto;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.25);}
+.modal-close{position:absolute;top:12px;right:14px;background:none;border:none;font-size:22px;color:var(--ink-3);cursor:pointer;}
+.modal-close:hover{color:var(--red);}
+.modal-title{font-family:var(--serif);font-size:22px;font-weight:700;color:var(--ink);margin-bottom:4px;}
+.modal-sub{font-size:13px;color:var(--ink-3);font-style:italic;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--rule);}
+.prayer-entry{margin-bottom:18px;padding-bottom:18px;border-bottom:1px solid #f0ebe6;}
+.prayer-entry:last-child{border-bottom:none;margin-bottom:0;}
+.pe-name{font-family:var(--serif);font-size:16px;font-weight:700;color:var(--red);margin-bottom:2px;}
+.pe-title{font-size:12px;color:var(--ink-3);font-style:italic;margin-bottom:4px;}
+.pe-family{font-size:13px;color:var(--ink-2);margin-bottom:6px;}
+.pe-request{font-size:14px;color:var(--ink);line-height:1.65;padding:9px 13px;background:var(--warm);border-left:3px solid var(--red);border-radius:0 4px 4px 0;font-style:italic;}
+.pe-empty{color:var(--ink-3);font-style:italic;font-size:13px;padding:8px 13px;background:var(--warm);border-left:3px solid var(--rule);border-radius:0 4px 4px 0;}
+.pr-section-head{font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);margin:20px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--rule);}
 
-/* ── PUSHED ITEMS ── */
-.pushed-section { margin-top: 28px; }
-.pushed-header { font-size: 10px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--amber); margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid rgba(150,96,0,0.2); }
+/* ── PARETO ── */
+.pareto-bar{background:var(--black);color:#fff;border-radius:var(--r);padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:16px;}
+.pareto-num{font-family:var(--serif);font-size:42px;font-weight:700;color:var(--red);flex-shrink:0;line-height:1;}
+.pareto-text{font-size:13px;color:#bbb;line-height:1.6;}
+.pareto-text strong{color:#fff;}
 
-/* ── CHECKIN ALERT ── */
-.alert-bar {
-  background: var(--amber-bg); border: 1px solid rgba(150,96,0,0.25);
-  border-radius: var(--r); padding: 10px 14px;
-  font-size: 13px; color: var(--amber); margin-bottom: 16px;
-  display: flex; align-items: center; gap: 8px;
-}
-
-/* ── PARETO CALLOUT ── */
-.pareto-bar {
-  background: var(--black); color: #fff; border-radius: var(--r);
-  padding: 14px 18px; margin-bottom: 20px;
-  display: flex; align-items: center; gap: 16px;
-}
-.pareto-num { font-family: var(--serif); font-size: 42px; font-weight: 700; color: var(--red); flex-shrink: 0; line-height: 1; }
-.pareto-text { font-size: 13px; color: #bbb; line-height: 1.6; }
-.pareto-text strong { color: #fff; }
+/* ── LOADING ── */
+.loading{text-align:center;padding:40px;color:var(--ink-3);font-style:italic;font-size:14px;}
 </style>
 </head>
 <body>
 
+<!-- AUTH SCREEN -->
+<div id="auth-screen">
+  <div class="auth-card">
+    <div class="auth-logo">HeartCry Missionary Society</div>
+    <div class="auth-dept">Partner Care — Manager HUD</div>
+    <div class="auth-desc">Sign in with your Google account to access the department dashboard.</div>
+    <button class="google-btn" onclick="signInWithGoogle()">
+      <svg class="google-icon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+      Sign in with Google
+    </button>
+    <div class="auth-err" id="auth-err"></div>
+  </div>
+  <div class="auth-verse">"Pray without ceasing." — 1 Thessalonians 5:17</div>
+</div>
+
 <!-- TOPBAR -->
 <div id="topbar">
-  <div class="tb-left">
+  <div class="tb-l">
     <div>
-      <div class="tb-logo">HeartCry Missionary Society</div>
-      <div class="tb-dept">Partner Care Department</div>
+      <div class="tb-title">HeartCry — Partner Care</div>
+      <div class="tb-dept">Manager HUD</div>
     </div>
     <div class="tb-sep"></div>
-    <div class="tb-user">David Bishop · Department Head</div>
+    <div class="tb-user" id="tb-user">David Bishop</div>
   </div>
-  <div class="tb-right">
-    <div class="tb-date" id="live-date"></div>
-    <button class="prayer-btn" onclick="openPrayer()">🙏 Pray for Team</button>
+  <div class="tb-r">
+    <div class="tb-date" id="tb-date"></div>
+    <button class="sign-out-btn" onclick="signOut()">Sign Out</button>
   </div>
 </div>
 
@@ -414,12 +371,10 @@ body { font-family: var(--sans); background: var(--bg); color: var(--ink); min-h
   <div class="nt" onclick="go('values')">Core Values</div>
 </div>
 
-<!-- MAIN -->
 <div id="main">
 
-<!-- ══ HOME / THIS WEEK ══ -->
+<!-- ══ HOME ══ -->
 <div id="panel-home" class="panel on">
-
   <div class="week-bar">
     <div>
       <div class="week-label" id="week-label">Week of —</div>
@@ -431,54 +386,26 @@ body { font-family: var(--sans); background: var(--bg); color: var(--ink); min-h
       <button onclick="shiftWeek(1)">Next →</button>
     </div>
   </div>
-
-  <!-- Metrics row -->
-  <div class="g4" style="margin-bottom:20px;" id="metrics-row"></div>
-
+  <div class="g4" id="metrics-row" style="margin-bottom:20px;"></div>
   <div class="g2">
     <div>
-      <!-- Priority section -->
       <div class="sec-title">Weekly Priorities</div>
-      <div style="font-size:13px;color:var(--ink-3);margin-bottom:14px;font-style:italic;">
-        Suggested from active projects + goals progress. Agree to commit, or push to next week.
-      </div>
+      <div style="font-size:13px;color:var(--ink-3);margin-bottom:14px;font-style:italic;">Suggested from active projects + goals. Agree to commit or push to next week.</div>
       <div id="priorities-list"></div>
-
-      <!-- Pushed items -->
-      <div id="pushed-section" class="pushed-section" style="display:none;">
-        <div class="pushed-header">⏭ Pushed to This Week from Last Week</div>
+      <div id="pushed-section" style="display:none;margin-top:24px;">
+        <div style="font-size:10px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--amber);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid rgba(150,96,0,.2);">⏭ Pushed from Last Week</div>
         <div id="pushed-list"></div>
       </div>
     </div>
-
     <div>
-      <!-- Core value next -->
       <div class="sec-title">Core Value in Focus</div>
-      <div class="card card-sm" id="cv-focus-card" style="margin-bottom:16px;"></div>
-
-      <!-- Quarter roadmap -->
+      <div class="card" style="padding:16px;margin-bottom:16px;" id="cv-focus-card"></div>
       <div class="sec-title">2026 Quarter Roadmap</div>
       <div class="card" style="padding:0;">
-        <div class="q-row">
-          <div class="q-label">Q1</div>
-          <div><div class="q-name">Foundation & Definition</div><div class="q-desc">Communication standards, workflows, website direction established.</div></div>
-          <div><span class="tag tag-green">Complete</span></div>
-        </div>
-        <div class="q-row" style="background:#fff8f6;">
-          <div class="q-label current">Q2 ← Now</div>
-          <div><div class="q-name" style="color:var(--red);">Implementation & Application</div><div class="q-desc">Standards live. Magazine done. Onboarding launched. Website, Prayer Network, Processes in progress.</div></div>
-          <div><span class="tag tag-red">Active</span></div>
-        </div>
-        <div class="q-row">
-          <div class="q-label">Q3</div>
-          <div><div class="q-name">Staffing & Delivery Stability</div><div class="q-desc">Consistent delivery rhythms. Live website. Full team clarity.</div></div>
-          <div><span class="tag tag-gray">Upcoming</span></div>
-        </div>
-        <div class="q-row">
-          <div class="q-label">Q4</div>
-          <div><div class="q-name">Review, Strengthen, Prepare</div><div class="q-desc">Full-year review. Content protected. Direction for 2027.</div></div>
-          <div><span class="tag tag-gray">Upcoming</span></div>
-        </div>
+        <div class="q-row"><div class="q-lbl">Q1</div><div><div class="q-name">Foundation & Definition</div><div class="q-desc">Standards, workflows, website direction established.</div></div><div><span class="tag tag-green">Complete</span></div></div>
+        <div class="q-row" style="background:#fff8f6;"><div class="q-lbl cur">Q2 ← Now</div><div><div class="q-name" style="color:var(--red);">Implementation & Application</div><div class="q-desc">Standards live. Magazine done. Onboarding launched.</div></div><div><span class="tag tag-red">Active</span></div></div>
+        <div class="q-row"><div class="q-lbl">Q3</div><div><div class="q-name">Staffing & Delivery Stability</div><div class="q-desc">Consistent rhythms. Live website. Team clarity.</div></div><div><span class="tag tag-gray">Upcoming</span></div></div>
+        <div class="q-row"><div class="q-lbl">Q4</div><div><div class="q-name">Review, Strengthen, Prepare</div><div class="q-desc">Full-year review. Content protected. 2027 direction.</div></div><div><span class="tag tag-gray">Upcoming</span></div></div>
       </div>
     </div>
   </div>
@@ -488,7 +415,7 @@ body { font-family: var(--sans); background: var(--bg); color: var(--ink); min-h
 <div id="panel-goals" class="panel">
   <div class="pareto-bar">
     <div class="pareto-num">80/20</div>
-    <div class="pareto-text"><strong>Pareto Principle:</strong> Which two of your five annual goals, if fully executed, would drive the greatest impact on the department's mission? Focus there first. Track completion honestly — a goal with five steps done is not the same as a goal that matters.</div>
+    <div class="pareto-text"><strong>Pareto Principle:</strong> Which two of your five annual goals, if fully executed, would drive the greatest impact? Focus there first.</div>
   </div>
   <div class="sec-title">Annual Department Goals — 2026</div>
   <div class="card" style="padding:0 20px;" id="goals-list"></div>
@@ -500,32 +427,19 @@ body { font-family: var(--sans); background: var(--bg); color: var(--ink); min-h
     <div><div class="pg-title">Active Projects</div><div class="pg-sub">Q2 2026 — Partner Care</div></div>
     <button class="btn btn-ghost btn-sm" onclick="toggleAddProj()">+ Add Project</button>
   </div>
-
   <div class="pareto-bar" style="margin-bottom:16px;">
     <div class="pareto-num">20%</div>
-    <div class="pareto-text"><strong>Which project on this list, if completed well, would have the greatest downstream impact?</strong> That is your highest-leverage project. Everything else is important — but that one is the 20% that drives 80%.</div>
+    <div class="pareto-text"><strong>Which project, if completed well, has the greatest downstream impact?</strong> That is your highest-leverage 20%.</div>
   </div>
-
   <div class="add-form" id="add-proj-form">
     <div class="af-grid">
       <div><label class="af-label">Project Name</label><input id="np-name" type="text" placeholder="Name..."></div>
       <div><label class="af-label">Owner</label><input id="np-owner" type="text" placeholder="Owner..."></div>
       <div><label class="af-label">Deadline</label><input id="np-deadline" type="date"></div>
-      <div><label class="af-label">Status</label>
-        <select id="np-status">
-          <option value="active">Active</option>
-          <option value="in-progress">In Progress</option>
-          <option value="on-hold">On Hold</option>
-          <option value="complete">Complete</option>
-        </select>
-      </div>
+      <div><label class="af-label">Status</label><select id="np-status"><option value="active">Active</option><option value="in-progress">In Progress</option><option value="on-hold">On Hold</option><option value="complete">Complete</option></select></div>
     </div>
-    <div style="display:flex;gap:8px;">
-      <button class="btn btn-red btn-sm" onclick="addProject()">Add</button>
-      <button class="btn btn-ghost btn-sm" onclick="toggleAddProj()">Cancel</button>
-    </div>
+    <div style="display:flex;gap:8px;"><button class="btn btn-red btn-sm" onclick="addProject()">Add</button><button class="btn btn-ghost btn-sm" onclick="toggleAddProj()">Cancel</button></div>
   </div>
-
   <div class="card" style="padding:0;overflow:hidden;">
     <table class="proj-table">
       <thead><tr><th style="width:35%">Project</th><th>Owner</th><th>Deadline</th><th>Status</th><th>Priority</th></tr></thead>
@@ -536,22 +450,46 @@ body { font-family: var(--sans); background: var(--bg); color: var(--ink); min-h
 
 <!-- ══ TEAM ══ -->
 <div id="panel-team" class="panel">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-    <div><div class="pg-title">Team</div><div class="pg-sub">Check-ins · Prayer · Personal Notes</div></div>
-    <button class="btn btn-red btn-sm" onclick="openPrayer()">🙏 Pray for All</button>
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+    <div><div class="pg-title">Team</div><div class="pg-sub">Check-ins · Prayer · Family</div></div>
+    <button class="btn btn-red btn-sm" onclick="openPrayerModal()">🙏 Pray for All</button>
   </div>
-  <div id="team-list"></div>
+
+  <!-- Partner Care team -->
+  <div id="pc-team-list"></div>
+
+  <!-- Full HeartCry Staff -->
+  <div style="margin-top:28px;">
+    <div class="sec-title">Full HeartCry Staff — Family & Prayer</div>
+    <div style="font-size:13px;color:var(--ink-3);margin-bottom:14px;font-style:italic;">Add family info and prayer requests for all staff. Included in the Pray for All view.</div>
+    <div id="full-staff-list"></div>
+  </div>
+
+  <!-- Prayer Requests section -->
+  <div style="margin-top:32px;">
+    <div class="sec-title">Prayer Requests</div>
+    <div style="font-size:13px;color:var(--ink-3);margin-bottom:14px;font-style:italic;">Add prayer requests by department, country, or staff member.</div>
+    <div class="pr-add-bar">
+      <input id="pr-title" type="text" placeholder="Title (e.g. Indonesia, Partner Care Team, Adam's Church Visit...)">
+      <select id="pr-cat">
+        <option value="department">Department</option>
+        <option value="country">Country</option>
+        <option value="staff">Staff Member</option>
+        <option value="other">Other</option>
+      </select>
+      <button class="btn btn-red btn-sm" onclick="addPrayerRequest()">+ Add</button>
+    </div>
+    <div class="pr-list" id="pr-list"></div>
+  </div>
 </div>
 
 <!-- ══ CORE VALUES ══ -->
 <div id="panel-values" class="panel">
   <div class="pg-title" style="margin-bottom:4px;">Core Values</div>
-  <div class="pg-sub" style="margin-bottom:20px;">Rotation tracker — which value is next, and when was each last covered</div>
-
+  <div class="pg-sub" style="margin-bottom:20px;">Track rotation — which value is next, when was each last covered</div>
   <div class="sec-title">Rotation</div>
   <div class="cv-rotation" id="cv-rotation"></div>
-
-  <div class="sec-title">All Values — Log Discussion</div>
+  <div class="sec-title">All Values</div>
   <div class="card" style="padding:0;overflow:hidden;" id="cv-all-list"></div>
 </div>
 
@@ -560,711 +498,659 @@ body { font-family: var(--sans); background: var(--bg); color: var(--ink); min-h
 <!-- PRAYER MODAL -->
 <div id="modal-bg">
   <div class="modal">
-    <button class="modal-close" onclick="closePrayer()">×</button>
+    <button class="modal-close" onclick="closePrayerModal()">×</button>
     <div class="modal-title">Team Prayer</div>
     <div class="modal-sub">Praying for each person and their family</div>
-    <div id="prayer-content"></div>
+    <div id="modal-content"></div>
   </div>
 </div>
 
-<script>
-// ══════════════════════════════════════════════════
-// CONSTANTS & DEFAULTS
-// ══════════════════════════════════════════════════
-const SK = 'hc_pc_hud_v2';
+<!-- Firebase SDKs -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut as fbSignOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, onSnapshot, collection, addDoc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-const DEFAULTS = {
-  weekOffset: 0,
-  priorities: [],  // { id, text, why, source, status: 'pending'|'agreed'|'pushed'|'done', weekKey }
-  goals: [
-    { id:'g1', text:'Steward partner relationships with warmth, clarity, and faithfulness',
-      steps:['Establish consistent relational care rhythm for all donor churches','Confirm communication expectations between Relations and Communications teams','Build annual church partner care plan with resource packets and prayer updates','Implement quarterly relational review report for leadership','Coordinate partner prayer updates system with Communications'], done:[] },
-    { id:'g2', text:'Establish consistent, trustworthy communication across all channels',
-      steps:['Complete branding & voice standards','Complete story intake → publication pipeline','Complete film, magazine, newsletter, and social media standards','Editorial calendar finalized and in active use','Website direction approved and execution underway'], done:[] },
-    { id:'g3', text:'Build durable systems — people, processes, infrastructure',
-      steps:['CRM transition to Zoho underway (Robert + David Bishop)','Contractor database built and active','Sermon archive consolidation and categorization planned','Core processes documented for all key deliverables','New staff onboarding process established'], done:[] },
-    { id:'g4', text:'Increase capacity without sacrificing doctrinal integrity or quality',
-      steps:['Team role clarity confirmed for all nine staff','Workflow bottlenecks identified and addressed per team','Role-specific training delivered for each team member','Media Hub fully utilized for intake and gap identification'], done:[] },
-    { id:'g5', text:'Protect and organize HeartCry content for long-term use',
-      steps:['Photo archive categorization complete','Film and visual assets properly stored and archived','Content security and field sensitivity protocol documented','Sermon transcription underway or nearing completion'], done:[] },
-  ],
-  projects: [
-    { id:'p1', name:'Summer Magazine', owner:'Kacie / Titus / Jared', deadline:'', status:'complete', notes:'Completed Q2. Mailed to all donors.', highLeverage: false },
-    { id:'p2', name:'Core Processes & Key Deliverables', owner:'David Bishop', deadline:'', status:'in-progress', notes:'Building internal processes for all key organizational deliverables.', highLeverage: true },
-    { id:'p3', name:'Prayer Partner Network Design', owner:'David Bishop', deadline:'', status:'active', notes:'Designing structured system for weekly prayer requests, emergency updates, and field reports.', highLeverage: true },
-    { id:'p4', name:'New Donor Onboarding', owner:'Malia / Gabriel / Titus', deadline:'', status:'complete', notes:'Completed Q2. Structured onboarding sequence launched.', highLeverage: false },
-    { id:'p5', name:'Website Content Project', owner:'Titus / Gabriel / JJ', deadline:'', status:'active', notes:'Focused project to reflect HeartCry identity and mobilize prayer and giving.', highLeverage: false },
-    { id:'p6', name:'Missionary Onboarding Process', owner:'David Bishop', deadline:'', status:'active', notes:'Identifying the right opportunity to launch a formal missionary onboarding process.', highLeverage: false },
-  ],
-  team: [
-    { id:'t1', name:'Adam', title:'Partner Relationships Manager', team:'Partner Relations', pt:false, spouse:'', kids:'', prayer:'', checkin:{start:'',stop:'',keep:'',notes:''}, lastCheckin:'' },
-    { id:'t2', name:'Malia', title:'Partner Administrator', team:'Partner Relations', pt:false, spouse:'', kids:'', prayer:'', checkin:{start:'',stop:'',keep:'',notes:''}, lastCheckin:'' },
-    { id:'t3', name:'Bonnie', title:'Support Staff (Part-Time)', team:'Partner Relations', pt:true, spouse:'', kids:'', prayer:'', checkin:{start:'',stop:'',keep:'',notes:''}, lastCheckin:'' },
-    { id:'t4', name:'Kacie', title:'Editorial Writer', team:'Partner Communications', pt:false, spouse:'', kids:'', prayer:'', checkin:{start:'',stop:'',keep:'',notes:''}, lastCheckin:'' },
-    { id:'t5', name:'Gabriel', title:'Social Media Manager', team:'Partner Communications', pt:false, spouse:'', kids:'', prayer:'', checkin:{start:'',stop:'',keep:'',notes:''}, lastCheckin:'' },
-    { id:'t6', name:'Titus', title:'Media Specialist', team:'Partner Communications', pt:false, spouse:'', kids:'', prayer:'', checkin:{start:'',stop:'',keep:'',notes:''}, lastCheckin:'' },
-    { id:'t7', name:'Chris', title:'Filmmaker', team:'Partner Communications', pt:false, spouse:'', kids:'', prayer:'', checkin:{start:'',stop:'',keep:'',notes:''}, lastCheckin:'' },
-    { id:'t8', name:'Jared', title:'Filmmaker / Designer', team:'Partner Communications', pt:false, spouse:'', kids:'', prayer:'', checkin:{start:'',stop:'',keep:'',notes:''}, lastCheckin:'' },
-    { id:'t9', name:'Silas', title:'Film Assistant', team:'Partner Communications', pt:false, spouse:'', kids:'', prayer:'', checkin:{start:'',stop:'',keep:'',notes:''}, lastCheckin:'' },
-    { id:'t10', name:'JJ', title:'Support Assistant', team:'Partner Communications', pt:false, spouse:'', kids:'', prayer:'', checkin:{start:'',stop:'',keep:'',notes:''}, lastCheckin:'' },
-  ],
-  coreValues: [
-    { id:'cv1', name:'DISCIPLES', tagline:'Devoted to Christ', lastDiscussed:'', discussions:[] },
-    { id:'cv2', name:'BRANCHES', tagline:'Dependent upon Christ\'s Faithfulness', lastDiscussed:'', discussions:[] },
-    { id:'cv3', name:'FELLOW-WORKERS', tagline:'A Band of Believers', lastDiscussed:'', discussions:[] },
-    { id:'cv4', name:'STEWARDS', tagline:'Faithful Stewardship', lastDiscussed:'', discussions:[] },
-    { id:'cv5', name:'SERVANTS', tagline:'Servants of God\'s Servants', lastDiscussed:'', discussions:[] },
-    { id:'cv6', name:'SOLDIERS', tagline:'War-time Mentality', lastDiscussed:'', discussions:[] },
-  ],
-  cvIndex: 0,
-  prayerDone: false,
-  prayerDoneWeek: '',
+const firebaseConfig = {
+  apiKey: "AIzaSyBRpjXT0TPZHAa6uYJD6jMb-lGnPfQRw1U",
+  authDomain: "heartcry-hud.firebaseapp.com",
+  projectId: "heartcry-hud",
+  storageBucket: "heartcry-hud.firebasestorage.app",
+  messagingSenderId: "148540702480",
+  appId: "1:148540702480:web:58c636fde3b8fc345a6f95",
+  measurementId: "G-1VJDTVHLZT"
 };
 
-// ══════════════════════════════════════════════════
-// STATE
-// ══════════════════════════════════════════════════
-let S = loadState();
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const provider = new GoogleAuthProvider();
 
-function loadState() {
+// ══════════════════════════════════════════
+// AUTH
+// ══════════════════════════════════════════
+window.signInWithGoogle = async () => {
   try {
-    const raw = localStorage.getItem(SK);
-    if (!raw) return JSON.parse(JSON.stringify(DEFAULTS));
-    const saved = JSON.parse(raw);
-    const d = JSON.parse(JSON.stringify(DEFAULTS));
-    // Merge saved fields
-    ['weekOffset','priorities','cvIndex','prayerDone','prayerDoneWeek'].forEach(k => {
-      if (saved[k] !== undefined) d[k] = saved[k];
-    });
-    if (saved.goals) d.goals = saved.goals;
-    if (saved.projects) d.projects = saved.projects;
-    if (saved.team) {
-      d.team = d.team.map(dt => {
-        const sv = saved.team.find(s => s.id === dt.id);
-        return sv ? {...dt, ...sv} : dt;
-      });
+    await signInWithPopup(auth, provider);
+  } catch(e) {
+    document.getElementById("auth-err").textContent = "Sign in failed. Please try again.";
+  }
+};
+
+window.signOut = async () => {
+  await fbSignOut(auth);
+  document.getElementById("auth-screen").classList.remove("hidden");
+};
+
+onAuthStateChanged(auth, user => {
+  if(user) {
+    document.getElementById("auth-screen").classList.add("hidden");
+    document.getElementById("tb-user").textContent = user.displayName || "David Bishop";
+    initApp(user.uid);
+  } else {
+    document.getElementById("auth-screen").classList.remove("hidden");
+  }
+});
+
+// ══════════════════════════════════════════
+// DATA DEFAULTS
+// ══════════════════════════════════════════
+const DEFAULT_GOALS = [
+  { id:'g1', text:'Steward partner relationships with warmth, clarity, and faithfulness',
+    steps:['Consistent relational care rhythm for all donor churches','Partner follow-up process built','Prayer updates system coordinated with Communications','Annual church partner care plan complete','Quarterly relational review report implemented'], done:[] },
+  { id:'g2', text:'Establish consistent, trustworthy communication across all channels',
+    steps:['Branding & voice standards complete','Story intake pipeline defined','Film, magazine, newsletter, social standards complete','Editorial calendar finalized and active','Website direction approved and execution underway'], done:[] },
+  { id:'g3', text:'Build durable systems — people, processes, infrastructure',
+    steps:['CRM transition to Zoho underway (Robert + David Bishop)','Contractor database built and active','Sermon archive consolidation planned','Core processes documented for all key deliverables','New staff onboarding process established'], done:[] },
+  { id:'g4', text:'Increase capacity without sacrificing doctrinal integrity or quality',
+    steps:['Team role clarity confirmed for all nine staff','Workflow bottlenecks identified and addressed','Role-specific training delivered for each team member','Media Hub fully utilized for intake and gap identification'], done:[] },
+  { id:'g5', text:'Protect and organize HeartCry content for long-term use',
+    steps:['Photo archive categorization complete','Film and visual assets properly stored and archived','Content security and field sensitivity protocol documented','Sermon transcription underway or nearing completion'], done:[] },
+];
+
+const DEFAULT_PROJECTS = [
+  { id:'p1', name:'Summer Magazine', owner:'Kacie / Titus / Jared', deadline:'', status:'complete', notes:'Completed Q2.', highLeverage:false },
+  { id:'p2', name:'Core Processes & Key Deliverables', owner:'David Bishop', deadline:'', status:'in-progress', notes:'Building internal processes for all key organizational deliverables.', highLeverage:true },
+  { id:'p3', name:'Prayer Partner Network Design', owner:'David Bishop', deadline:'', status:'active', notes:'Designing structured system for weekly prayer requests and field reports.', highLeverage:true },
+  { id:'p4', name:'New Donor Onboarding', owner:'Malia / Gabriel / Titus', deadline:'', status:'complete', notes:'Completed Q2.', highLeverage:false },
+  { id:'p5', name:'Website Content Project', owner:'Titus / Gabriel / JJ', deadline:'', status:'active', notes:'Focused project to reflect HeartCry identity and mobilize prayer and giving.', highLeverage:false },
+  { id:'p6', name:'Missionary Onboarding Process', owner:'David Bishop', deadline:'', status:'active', notes:'Identifying the right opportunity to launch a formal missionary onboarding process.', highLeverage:false },
+];
+
+const PC_TEAM = [
+  { id:'t1', name:'Adam', title:'Partner Relationships Manager', team:'Partner Relations' },
+  { id:'t2', name:'Malia', title:'Partner Administrator', team:'Partner Relations' },
+  { id:'t3', name:'Bonnie', title:'Support Staff (Part-Time)', team:'Partner Relations' },
+  { id:'t4', name:'Kacie', title:'Editorial Writer', team:'Partner Communications' },
+  { id:'t5', name:'Gabriel', title:'Social Media Manager', team:'Partner Communications' },
+  { id:'t6', name:'Titus', title:'Media Specialist', team:'Partner Communications' },
+  { id:'t7', name:'Chris', title:'Filmmaker', team:'Partner Communications' },
+  { id:'t8', name:'Jared', title:'Filmmaker / Designer', team:'Partner Communications' },
+  { id:'t9', name:'Silas', title:'Film Assistant', team:'Partner Communications' },
+  { id:'t10', name:'JJ', title:'Support Assistant', team:'Partner Communications' },
+];
+
+const FULL_STAFF = [
+  {id:'s1',name:'Bonnie Ames',spouse:'Timothy',children:[]},
+  {id:'s2',name:'Ty Brogdon',spouse:'Lauren',children:['Mae','Kinsley']},
+  {id:'s3',name:'Adam Burrell',spouse:'Jessica',children:['Zoe','Belle','Lillian','Corban']},
+  {id:'s4',name:'Ryan Bush',spouse:'Amanda',children:['Sophia','Samuel','Silas','Abigail']},
+  {id:'s5',name:'Josh Coble',spouse:'Abi',children:['Hudson','Townsend','Eyan']},
+  {id:'s6',name:'Kacie Crosswhite',spouse:'Cody',children:['Delano']},
+  {id:'s7',name:'Don Currin',spouse:'Cindy',children:[]},
+  {id:'s8',name:'Daniel Doan',spouse:'Cassandra',children:['Lydia','Micaiah','Ida']},
+  {id:'s9',name:'Dirk Erasmus',spouse:'Riëtte',children:['Jacobus','Christiaan']},
+  {id:'s10',name:'Hunter Gately',spouse:'Leighton',children:['Truett','Dawson']},
+  {id:'s11',name:'Jared Hall',spouse:'Jessica',children:['Audrey','Lillian','Edmund','Josiah','Elena']},
+  {id:'s12',name:'Chris Hernandez',spouse:'Natalie',children:['Isabella','Eowyn','Elora','Josiah']},
+  {id:'s13',name:'Jose Hernandez',spouse:'Christine',children:['Caleb','Watson','Gideon','Josiah','Abigail']},
+  {id:'s14',name:'Gabriel Igarashi',spouse:'Sumaia',children:['Arthur','Josiah']},
+  {id:'s15',name:'JJ John',spouse:'Holyn Flanders (Fiancée)',children:[]},
+  {id:'s16',name:'Ben Lane',spouse:'Sarah',children:['Josiah','Abi','Sophia','Simeon','Seth']},
+  {id:'s17',name:'Jimmy Li',spouse:'Nancy',children:['Rebecca','Hannah']},
+  {id:'s18',name:'Delano Rolle',spouse:'Demi',children:[]},
+  {id:'s19',name:'Robert Rogers',spouse:'McKenzie',children:['Emery','Elias']},
+  {id:'s20',name:'Jeff Shawver',spouse:'Jennifer',children:['Brahm','Avery','Mya','Avigail','Jamey']},
+  {id:'s21',name:'Jamey Tucker',spouse:'Jessica',children:['Malachi']},
+  {id:'s22',name:'Titus Vaughan',spouse:'Ashley',children:[]},
+  {id:'s23',name:'Paul Washer',spouse:'Charo',children:['Ian','Evan','Bronwyn']},
+  {id:'s24',name:'Gabriel Josiah',spouse:'',children:['Elena']},
+];
+
+const CV_DATA = [
+  { id:'cv1', name:'DISCIPLES', tagline:'Devoted to Christ' },
+  { id:'cv2', name:'BRANCHES', tagline:'Dependent upon Christ\'s Faithfulness' },
+  { id:'cv3', name:'FELLOW-WORKERS', tagline:'A Band of Believers' },
+  { id:'cv4', name:'STEWARDS', tagline:'Faithful Stewardship' },
+  { id:'cv5', name:'SERVANTS', tagline:'Servants of God\'s Servants' },
+  { id:'cv6', name:'SOLDIERS', tagline:'War-time Mentality' },
+];
+
+// ══════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════
+let uid = null;
+let S = {
+  weekOffset: 0,
+  priorities: [],
+  goals: JSON.parse(JSON.stringify(DEFAULT_GOALS)),
+  projects: JSON.parse(JSON.stringify(DEFAULT_PROJECTS)),
+  teamData: {},      // keyed by person id
+  staffData: {},     // keyed by staff id
+  prayerRequests: [],
+  cvIndex: 0,
+  cvDates: {},
+  prayerDoneWeek: '',
+};
+let unsubscribe = null;
+
+async function initApp(userId) {
+  uid = userId;
+  document.getElementById("tb-date").textContent = new Date().toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric",year:"numeric"});
+
+  // Listen to user doc in Firestore
+  const userRef = doc(db, "users", uid, "hud", "state");
+  if(unsubscribe) unsubscribe();
+  unsubscribe = onSnapshot(userRef, snap => {
+    if(snap.exists()) {
+      const data = snap.data();
+      if(data.goals) S.goals = data.goals;
+      if(data.projects) S.projects = data.projects;
+      if(data.priorities) S.priorities = data.priorities;
+      if(data.teamData) S.teamData = data.teamData;
+      if(data.staffData) S.staffData = data.staffData;
+      if(data.prayerRequests) S.prayerRequests = data.prayerRequests;
+      if(typeof data.cvIndex === 'number') S.cvIndex = data.cvIndex;
+      if(data.cvDates) S.cvDates = data.cvDates;
+      if(data.prayerDoneWeek) S.prayerDoneWeek = data.prayerDoneWeek;
+      if(typeof data.weekOffset === 'number') S.weekOffset = data.weekOffset;
     }
-    if (saved.coreValues) {
-      d.coreValues = d.coreValues.map(dv => {
-        const sv = saved.coreValues.find(s => s.id === dv.id);
-        return sv ? {...dv, ...sv} : dv;
-      });
-    }
-    return d;
-  } catch(e) { return JSON.parse(JSON.stringify(DEFAULTS)); }
+    renderAll();
+  });
 }
 
-function save() { localStorage.setItem(SK, JSON.stringify(S)); }
+async function saveState() {
+  if(!uid) return;
+  const userRef = doc(db, "users", uid, "hud", "state");
+  await setDoc(userRef, S, { merge: true });
+}
 
-// ══════════════════════════════════════════════════
-// WEEK HELPERS
-// ══════════════════════════════════════════════════
-function getWeekStart(offset = 0) {
+// ══════════════════════════════════════════
+// WEEK
+// ══════════════════════════════════════════
+function getWeekStart(off=0) {
   const now = new Date();
   const day = now.getDay();
-  const diff = now.getDate() - day + (day === 0 ? -6 : 1);
-  const monday = new Date(now.setDate(diff + offset * 7));
-  monday.setHours(0,0,0,0);
-  return monday;
+  const diff = now.getDate() - day + (day===0?-6:1);
+  const mon = new Date(now); mon.setDate(diff + off*7); mon.setHours(0,0,0,0);
+  return mon;
 }
-
-function weekKey(date) {
-  return date.toISOString().slice(0,10);
+function weekKey(d){ return d.toISOString().slice(0,10); }
+function currentWeekKey(){ return weekKey(getWeekStart(S.weekOffset)); }
+function fmtWeekLabel(d){
+  const end=new Date(d); end.setDate(end.getDate()+4);
+  return `Week of ${d.toLocaleDateString("en-US",{month:"short",day:"numeric"})} — ${end.toLocaleDateString("en-US",{month:"short",day:"numeric"})}, ${end.getFullYear()}`;
 }
+window.shiftWeek = async (dir) => { S.weekOffset += dir; await saveState(); renderHome(); };
+window.goToday = async () => { S.weekOffset = 0; await saveState(); renderHome(); };
 
-function currentWeekKey() {
-  return weekKey(getWeekStart(S.weekOffset));
-}
-
-function formatWeekLabel(date) {
-  const end = new Date(date); end.setDate(end.getDate() + 4);
-  const opts = { month:'short', day:'numeric' };
-  return `Week of ${date.toLocaleDateString('en-US', opts)} — ${end.toLocaleDateString('en-US', opts)}, ${end.getFullYear()}`;
-}
-
-function shiftWeek(dir) { S.weekOffset += dir; save(); renderHome(); }
-function goToday() { S.weekOffset = 0; save(); renderHome(); }
-
-// ══════════════════════════════════════════════════
-// PRIORITY ENGINE
-// ══════════════════════════════════════════════════
-function generateSuggestedPriorities() {
-  const suggestions = [];
-
-  // From active projects — high leverage first
+// ══════════════════════════════════════════
+// PRIORITIES
+// ══════════════════════════════════════════
+function generateSuggestions() {
+  const suggs = [];
   const activeProj = S.projects.filter(p => p.status !== 'complete');
-  const highLev = activeProj.filter(p => p.highLeverage);
-  const normal = activeProj.filter(p => !p.highLeverage);
-
-  highLev.forEach(p => {
-    suggestions.push({
-      id: 'sp-' + p.id,
-      text: p.name,
-      why: `High-leverage project. ${p.notes} Completing this advances multiple annual goals simultaneously — this is your 20%.`,
-      source: 'project',
-      sourceId: p.id,
-    });
+  activeProj.filter(p=>p.highLeverage).forEach(p => {
+    suggs.push({ id:'sp-'+p.id, text:p.name, why:`High-leverage project. ${p.notes} This is your 20%.`, source:'project', sourceId:p.id });
   });
-
-  normal.forEach(p => {
-    suggestions.push({
-      id: 'sp-' + p.id,
-      text: p.name,
-      why: `Active Q2 project. ${p.notes}`,
-      source: 'project',
-      sourceId: p.id,
-    });
+  activeProj.filter(p=>!p.highLeverage).forEach(p => {
+    suggs.push({ id:'sp-'+p.id, text:p.name, why:`Active Q2 project. ${p.notes}`, source:'project', sourceId:p.id });
   });
-
-  // From goals — find lowest progress
-  const goalProgress = S.goals.map(g => ({
-    g, pct: g.steps.length ? g.done.length / g.steps.length : 0
-  })).sort((a,b) => a.pct - b.pct);
-
-  if (goalProgress.length > 0) {
-    const lagging = goalProgress[0].g;
-    const pct = Math.round(goalProgress[0].pct * 100);
-    suggestions.push({
-      id: 'sg-' + lagging.id,
-      text: `Annual Goal: ${lagging.text}`,
-      why: `This goal is at ${pct}% completion — the furthest behind of your five annual goals. Review and advance at least one step this week.`,
-      source: 'goal',
-      sourceId: lagging.id,
-    });
+  const sorted = [...S.goals].sort((a,b)=>(a.done.length/a.steps.length)-(b.done.length/b.steps.length));
+  if(sorted.length) {
+    const g = sorted[0];
+    suggs.push({ id:'sg-'+g.id, text:`Annual Goal: ${g.text}`, why:`This goal is at ${Math.round(g.done.length/g.steps.length*100)}% — the furthest behind. Advance at least one step this week.`, source:'goal', sourceId:g.id });
   }
-
-  // Check-ins overdue (>14 days)
-  const overdue = S.team.filter(t => {
-    if (!t.lastCheckin) return true;
-    const d = new Date(t.lastCheckin);
-    const diff = (new Date() - d) / (1000 * 60 * 60 * 24);
-    return diff > 14;
+  const overdue = PC_TEAM.filter(t => {
+    const td = S.teamData[t.id];
+    if(!td||!td.lastCheckin) return true;
+    return (new Date()-new Date(td.lastCheckin))/(1000*60*60*24) > 14;
   });
-  if (overdue.length > 0) {
-    suggestions.push({
-      id: 'sci',
-      text: `Team Check-ins Overdue (${overdue.length} ${overdue.length === 1 ? 'person' : 'people'})`,
-      why: `${overdue.map(t=>t.name).join(', ')} ${overdue.length === 1 ? 'has' : 'have'} not had a check-in in over 14 days. Culture health requires consistent relational investment — this is not optional.`,
-      source: 'team',
-    });
+  if(overdue.length) {
+    suggs.push({ id:'sci', text:`Team Check-ins Overdue (${overdue.length})`, why:`${overdue.map(t=>t.name).join(', ')} — no check-in in over 14 days. Culture health requires consistent investment.`, source:'team' });
   }
-
-  return suggestions.slice(0, 5);
+  return suggs.slice(0,5);
 }
 
-function getThisWeekPriorities() {
+window.agree = async (sid) => {
+  const suggs = generateSuggestions();
+  const s = suggs.find(x=>x.id===sid);
+  if(!s) return;
   const wk = currentWeekKey();
-  // Get agreed priorities for this week
-  const agreed = S.priorities.filter(p => p.weekKey === wk && p.status === 'agreed');
-  // Get pushed-to-this-week items
-  const pushed = S.priorities.filter(p => p.pushedToWeek === wk && p.status === 'pushed');
-  return { agreed, pushed };
-}
+  if(S.priorities.find(p=>p.id===sid&&p.weekKey===wk)) return;
+  S.priorities.push({...s, status:'agreed', weekKey:wk, pushedToWeek:null});
+  await saveState(); renderHome();
+};
 
-function agreePriority(suggId) {
-  const suggs = generateSuggestedPriorities();
-  const s = suggs.find(x => x.id === suggId);
-  if (!s) return;
+window.push = async (sid) => {
+  const suggs = generateSuggestions();
+  const s = suggs.find(x=>x.id===sid);
+  if(!s) return;
   const wk = currentWeekKey();
-  // Check not already added
-  if (S.priorities.find(p => p.id === suggId && p.weekKey === wk)) return;
-  S.priorities.push({ ...s, status:'agreed', weekKey: wk, pushedToWeek: null });
-  save(); renderHome();
-}
+  const nxt = weekKey(getWeekStart(S.weekOffset+1));
+  S.priorities.push({...s, status:'pushed', weekKey:wk, pushedToWeek:nxt});
+  await saveState(); renderHome();
+};
 
-function pushPriority(suggId) {
-  const suggs = generateSuggestedPriorities();
-  const s = suggs.find(x => x.id === suggId);
-  if (!s) return;
+window.markDone = async (id, wk) => {
+  const idx = S.priorities.findIndex(p=>p.id===id&&p.weekKey===wk);
+  if(idx>-1){ S.priorities[idx].status='done'; await saveState(); renderHome(); }
+};
+
+window.agreeFromPushed = async (id, origWk) => {
   const wk = currentWeekKey();
-  const nextWk = weekKey(getWeekStart(S.weekOffset + 1));
-  S.priorities.push({ ...s, status:'pushed', weekKey: wk, pushedToWeek: nextWk });
-  save(); renderHome();
-}
+  const item = S.priorities.find(p=>p.id===id&&p.weekKey===origWk&&p.status==='pushed');
+  if(item){ S.priorities.push({...item,status:'agreed',weekKey:wk,pushedToWeek:null}); item.status='resolved'; await saveState(); renderHome(); }
+};
 
-function markPriorityDone(entryId) {
-  const p = S.priorities.find(x => x.id === entryId || (x.id + x.weekKey) === entryId);
-  // find by composite
-  const idx = S.priorities.findIndex(x => (x.id + '-' + x.weekKey) === entryId);
-  if (idx > -1) { S.priorities[idx].status = 'done'; save(); renderHome(); }
-}
+window.pushAgain = async (id, origWk) => {
+  const nxt = weekKey(getWeekStart(S.weekOffset+1));
+  const item = S.priorities.find(p=>p.id===id&&p.weekKey===origWk);
+  if(item){ item.pushedToWeek=nxt; await saveState(); renderHome(); }
+};
 
-// ══════════════════════════════════════════════════
-// METRICS
-// ══════════════════════════════════════════════════
-function calcMetrics() {
-  // Goals progress
-  let totalSteps = 0, doneSteps = 0;
-  S.goals.forEach(g => { totalSteps += g.steps.length; doneSteps += g.done.length; });
-  const goalsPct = totalSteps ? Math.round(doneSteps/totalSteps*100) : 0;
-
-  // Check-ins this cycle (last 14 days)
-  const checkinDone = S.team.filter(t => {
-    if (!t.lastCheckin) return false;
-    const d = new Date(t.lastCheckin);
-    return (new Date() - d) / (1000*60*60*24) <= 14;
-  }).length;
-  const checkinPct = Math.round(checkinDone / S.team.length * 100);
-
-  // Prayer done this week
-  const wk = currentWeekKey();
-  const prayerDone = S.prayerDoneWeek === wk;
-
-  // Active projects
-  const activeCount = S.projects.filter(p => p.status !== 'complete').length;
-
-  return { goalsPct, checkinPct, prayerDone, doneSteps, totalSteps, activeCount, checkinDone, teamTotal: S.team.length };
-}
-
-// ══════════════════════════════════════════════════
+// ══════════════════════════════════════════
 // RENDER HOME
-// ══════════════════════════════════════════════════
+// ══════════════════════════════════════════
 function renderHome() {
-  const ws = getWeekStart(S.weekOffset);
-  document.getElementById('week-label').textContent = formatWeekLabel(ws);
+  document.getElementById("week-label").textContent = fmtWeekLabel(getWeekStart(S.weekOffset));
+  const wk = currentWeekKey();
 
-  const m = calcMetrics();
+  // Metrics
+  let ts=0, ds=0;
+  S.goals.forEach(g=>{ts+=g.steps.length;ds+=g.done.length;});
+  const gPct = ts ? Math.round(ds/ts*100) : 0;
+  const ciDone = PC_TEAM.filter(t=>{const td=S.teamData[t.id];if(!td||!td.lastCheckin)return false;return(new Date()-new Date(td.lastCheckin))/(1000*60*60*24)<=14;}).length;
+  const ciPct = Math.round(ciDone/PC_TEAM.length*100);
+  const pDone = S.prayerDoneWeek === wk;
+  const actProj = S.projects.filter(p=>p.status!=='complete').length;
 
-  // Metrics row
-  document.getElementById('metrics-row').innerHTML = `
-    <div class="metric ${m.goalsPct >= 50 ? 'green' : 'amber'}">
-      <div class="metric-label">Annual Goals</div>
-      <div class="metric-val">${m.goalsPct}%</div>
-      <div class="metric-note">${m.doneSteps} / ${m.totalSteps} steps complete</div>
-    </div>
-    <div class="metric ${m.checkinPct >= 80 ? 'green' : 'amber'}">
-      <div class="metric-label">Check-ins (14 days)</div>
-      <div class="metric-val">${m.checkinPct}%</div>
-      <div class="metric-note">${m.checkinDone} of ${m.teamTotal} team members</div>
-    </div>
-    <div class="metric ${m.prayerDone ? 'green' : ''}">
-      <div class="metric-label">Team Prayer</div>
-      <div class="metric-val">${m.prayerDone ? '✓' : '—'}</div>
-      <div class="metric-note">${m.prayerDone ? 'Completed this week' : 'Not yet this week'}</div>
-    </div>
-    <div class="metric blue">
-      <div class="metric-label">Active Projects</div>
-      <div class="metric-val">${m.activeCount}</div>
-      <div class="metric-note">of 6 Q2 projects</div>
-    </div>
+  document.getElementById("metrics-row").innerHTML = `
+    <div class="metric ${gPct>=50?'green':'amber'}"><div class="metric-label">Annual Goals</div><div class="metric-val">${gPct}%</div><div class="metric-note">${ds} / ${ts} steps complete</div></div>
+    <div class="metric ${ciPct>=80?'green':'amber'}"><div class="metric-label">Check-ins (14 days)</div><div class="metric-val">${ciPct}%</div><div class="metric-note">${ciDone} of ${PC_TEAM.length} team members</div></div>
+    <div class="metric ${pDone?'green':''}"><div class="metric-label">Team Prayer</div><div class="metric-val">${pDone?'✓':'—'}</div><div class="metric-note">${pDone?'Completed this week':'Not yet this week'}</div></div>
+    <div class="metric blue"><div class="metric-label">Active Projects</div><div class="metric-val">${actProj}</div><div class="metric-note">of 6 Q2 projects</div></div>
   `;
 
-  // Core value in focus
-  const cv = S.coreValues[S.cvIndex % S.coreValues.length];
-  document.getElementById('cv-focus-card').innerHTML = `
+  // CV focus
+  const cv = CV_DATA[S.cvIndex%CV_DATA.length];
+  document.getElementById("cv-focus-card").innerHTML = `
     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
       <div>
-        <div style="font-size:10px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:var(--red);margin-bottom:4px;">Up Next in Rotation</div>
-        <div style="font-family:var(--serif);font-size:20px;font-weight:700;color:var(--ink);">${cv.name}</div>
+        <div style="font-size:10px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--red);margin-bottom:4px;">Up Next in Rotation</div>
+        <div style="font-family:var(--serif);font-size:20px;font-weight:700;">${cv.name}</div>
         <div style="font-size:12px;color:var(--ink-3);font-style:italic;">${cv.tagline}</div>
-        <div style="font-family:var(--mono);font-size:11px;color:var(--ink-3);margin-top:6px;">${cv.lastDiscussed ? 'Last discussed: ' + cv.lastDiscussed : 'Not yet discussed'}</div>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--ink-3);margin-top:6px;">${S.cvDates[cv.id]?'Last: '+S.cvDates[cv.id]:'Not yet discussed'}</div>
       </div>
       <button class="btn btn-red btn-sm" onclick="logCV('${cv.id}')">✓ Log Discussion</button>
-    </div>
-  `;
+    </div>`;
 
-  // Suggested priorities
-  const suggs = generateSuggestedPriorities();
-  const wk = currentWeekKey();
-  const agreedIds = S.priorities.filter(p => p.weekKey === wk && p.status === 'agreed').map(p => p.id);
-  const pushedIds = S.priorities.filter(p => p.weekKey === wk && p.status === 'pushed').map(p => p.id);
-
+  // Priorities
+  const suggs = generateSuggestions();
+  const agreedIds = S.priorities.filter(p=>p.weekKey===wk&&p.status==='agreed').map(p=>p.id);
+  const pushedIds = S.priorities.filter(p=>p.weekKey===wk&&p.status==='pushed').map(p=>p.id);
+  const agreedItems = S.priorities.filter(p=>p.weekKey===wk&&p.status==='agreed');
   let html = '';
 
-  // Show agreed first
-  const agreedItems = S.priorities.filter(p => p.weekKey === wk && p.status === 'agreed');
-  agreedItems.forEach((p, i) => {
-    const eid = p.id + '-' + p.weekKey;
-    html += `
-    <div class="priority-card">
-      <div class="pc-header">
-        <div class="pc-num">${i+1}</div>
-        <div class="pc-body">
-          <div class="pc-title">${p.text} <span class="tag tag-green" style="font-size:9px;margin-left:6px;">Committed</span></div>
-          <div class="pc-why">${p.why}</div>
-          <div class="pc-actions">
-            <button class="btn btn-green btn-sm" onclick="markDone('${p.id}','${p.weekKey}')">✓ Mark Done</button>
-          </div>
-        </div>
-      </div>
-    </div>`;
+  agreedItems.forEach((p,i) => {
+    html += `<div class="priority-card"><div class="pc-header"><div class="pc-num">${i+1}</div><div class="pc-body"><div class="pc-title">${p.text} <span class="tag tag-green" style="font-size:9px;margin-left:6px;">Committed</span></div><div class="pc-why">${p.why}</div><div class="pc-actions"><button class="btn btn-green btn-sm" onclick="markDone('${p.id}','${p.weekKey}')">✓ Mark Done</button></div></div></div></div>`;
   });
 
-  // Show pending suggestions (not yet agreed or pushed)
-  const pendingSuggs = suggs.filter(s => !agreedIds.includes(s.id) && !pushedIds.includes(s.id));
-  if (pendingSuggs.length > 0 && agreedItems.length < 3) {
-    if (agreedItems.length === 0) {
-      html += `<div style="font-size:13px;color:var(--ink-3);font-style:italic;margin-bottom:10px;">The tool has identified these priorities based on your projects and goals. Agree to commit or push to next week.</div>`;
-    } else {
-      html += `<div style="font-size:12px;color:var(--ink-3);font-style:italic;margin:10px 0 8px;">Additional suggestions:</div>`;
-    }
-    pendingSuggs.slice(0, 3 - agreedItems.length).forEach((s, i) => {
-      html += `
-      <div class="priority-card" style="border-left-color:var(--ink-3);opacity:0.85;">
-        <div class="pc-header">
-          <div class="pc-num" style="color:var(--ink-3);">${agreedItems.length + i + 1}</div>
-          <div class="pc-body">
-            <div class="pc-title">${s.text} <span class="tag tag-gray" style="font-size:9px;margin-left:6px;">Suggested</span></div>
-            <div class="pc-why">${s.why}</div>
-            <div class="pc-actions">
-              <button class="btn btn-red btn-sm" onclick="agree('${s.id}')">✓ Agree — This is a Priority</button>
-              <button class="btn btn-ghost btn-sm" onclick="push('${s.id}')">⏭ Push to Next Week</button>
-            </div>
-          </div>
-        </div>
-      </div>`;
+  const pending = suggs.filter(s=>!agreedIds.includes(s.id)&&!pushedIds.includes(s.id));
+  if(pending.length&&agreedItems.length<3) {
+    if(!agreedItems.length) html += `<div style="font-size:13px;color:var(--ink-3);font-style:italic;margin-bottom:10px;">Suggested priorities based on your projects and goals. Agree to commit or push to next week.</div>`;
+    pending.slice(0,3-agreedItems.length).forEach((s,i) => {
+      html += `<div class="priority-card" style="border-left-color:var(--ink-3);opacity:.85;"><div class="pc-header"><div class="pc-num" style="color:var(--ink-3);">${agreedItems.length+i+1}</div><div class="pc-body"><div class="pc-title">${s.text} <span class="tag tag-gray" style="font-size:9px;margin-left:6px;">Suggested</span></div><div class="pc-why">${s.why}</div><div class="pc-actions"><button class="btn btn-red btn-sm" onclick="agree('${s.id}')">✓ Agree</button><button class="btn btn-ghost btn-sm" onclick="push('${s.id}')">⏭ Push to Next Week</button></div></div></div></div>`;
     });
   }
+  if(!html) html = '<div style="font-size:13px;color:var(--ink-3);font-style:italic;padding:16px 0;">All current priorities addressed. Well done.</div>';
+  document.getElementById("priorities-list").innerHTML = html;
 
-  if (!html) html = '<div style="font-size:13px;color:var(--ink-3);font-style:italic;padding:16px 0;">All current priorities have been addressed. Well done.</div>';
-  document.getElementById('priorities-list').innerHTML = html;
-
-  // Pushed items
-  const pushedItems = S.priorities.filter(p => p.pushedToWeek === wk && p.status === 'pushed');
-  const pushedSec = document.getElementById('pushed-section');
-  const pushedList = document.getElementById('pushed-list');
-  if (pushedItems.length > 0) {
-    pushedSec.style.display = 'block';
-    pushedList.innerHTML = pushedItems.map(p => `
-      <div class="priority-card pushed">
-        <div class="pc-header">
-          <div class="pc-num pushed">!</div>
-          <div class="pc-body">
-            <div class="pc-title">${p.text} <span class="tag tag-amber" style="font-size:9px;margin-left:6px;">Pushed from last week</span></div>
-            <div class="pc-why">${p.why}</div>
-            <div class="pc-actions">
-              <button class="btn btn-red btn-sm" onclick="agreeFromPushed('${p.id}','${p.weekKey}')">✓ Commit This Week</button>
-              <button class="btn btn-ghost btn-sm" onclick="pushAgain('${p.id}','${p.weekKey}')">⏭ Push Again</button>
-            </div>
-          </div>
-        </div>
-      </div>`).join('');
-  } else {
-    pushedSec.style.display = 'none';
-  }
+  const pushedItems = S.priorities.filter(p=>p.pushedToWeek===wk&&p.status==='pushed');
+  const ps = document.getElementById("pushed-section");
+  if(pushedItems.length) {
+    ps.style.display='block';
+    document.getElementById("pushed-list").innerHTML = pushedItems.map(p=>`
+      <div class="priority-card pushed"><div class="pc-header"><div class="pc-num amber">!</div><div class="pc-body"><div class="pc-title">${p.text} <span class="tag tag-amber" style="font-size:9px;margin-left:6px;">Pushed from last week</span></div><div class="pc-why">${p.why}</div><div class="pc-actions"><button class="btn btn-red btn-sm" onclick="agreeFromPushed('${p.id}','${p.weekKey}')">✓ Commit This Week</button><button class="btn btn-ghost btn-sm" onclick="pushAgain('${p.id}','${p.weekKey}')">⏭ Push Again</button></div></div></div></div>`).join('');
+  } else { ps.style.display='none'; }
 }
 
-function agree(id) { agreePriority(id); }
-function push(id) { pushPriority(id); }
-
-function markDone(id, wk) {
-  const idx = S.priorities.findIndex(p => p.id === id && p.weekKey === wk);
-  if (idx > -1) { S.priorities[idx].status = 'done'; save(); renderHome(); }
-}
-
-function agreeFromPushed(id, origWk) {
-  const wk = currentWeekKey();
-  const item = S.priorities.find(p => p.id === id && p.weekKey === origWk && p.status === 'pushed');
-  if (item) {
-    S.priorities.push({ ...item, status: 'agreed', weekKey: wk, pushedToWeek: null });
-    item.status = 'resolved';
-    save(); renderHome();
-  }
-}
-
-function pushAgain(id, origWk) {
-  const nextWk = weekKey(getWeekStart(S.weekOffset + 1));
-  const item = S.priorities.find(p => p.id === id && p.weekKey === origWk);
-  if (item) { item.pushedToWeek = nextWk; save(); renderHome(); }
-}
-
-// ══════════════════════════════════════════════════
+// ══════════════════════════════════════════
 // GOALS
-// ══════════════════════════════════════════════════
+// ══════════════════════════════════════════
 function renderGoals() {
-  const el = document.getElementById('goals-list');
-  el.innerHTML = S.goals.map(g => {
-    const done = g.done.length, total = g.steps.length;
-    const pct = total ? Math.round(done/total*100) : 0;
-    return `
-    <div class="goal-row">
+  document.getElementById("goals-list").innerHTML = S.goals.map(g => {
+    const d=g.done.length, t=g.steps.length, pct=t?Math.round(d/t*100):0;
+    return `<div class="goal-row">
       <div class="goal-title">${g.text}</div>
-      <div class="prog-wrap">
-        <div class="prog-labels"><span>${done} / ${total} steps</span><span>${pct}%</span></div>
-        <div class="prog-bar"><div class="prog-fill ${pct===100?'green':''}" style="width:${pct}%"></div></div>
-      </div>
-      <ul class="step-list">
-        ${g.steps.map((s,i) => {
-          const isDone = g.done.includes(i);
-          return `<li class="step-li ${isDone?'done':''}" onclick="toggleStep('${g.id}',${i})">
-            <div class="step-box"></div><span>${s}</span>
-          </li>`;
-        }).join('')}
-      </ul>
+      <div class="prog-wrap"><div class="prog-labels"><span>${d} / ${t} steps</span><span>${pct}%</span></div><div class="prog-bar"><div class="prog-fill ${pct===100?'green':''}" style="width:${pct}%"></div></div></div>
+      <ul class="step-list">${g.steps.map((s,i)=>{const done=g.done.includes(i);return`<li class="step-li ${done?'done':''}" onclick="toggleStep('${g.id}',${i})"><div class="step-box"></div><span>${s}</span></li>`;}).join('')}</ul>
     </div>`;
   }).join('');
 }
 
-function toggleStep(gid, idx) {
-  const g = S.goals.find(x => x.id === gid);
-  if (!g) return;
+window.toggleStep = async (gid, idx) => {
+  const g = S.goals.find(x=>x.id===gid);
+  if(!g) return;
   const i = g.done.indexOf(idx);
-  if (i > -1) g.done.splice(i,1); else g.done.push(idx);
-  save(); renderGoals(); renderHome();
-}
+  if(i>-1) g.done.splice(i,1); else g.done.push(idx);
+  await saveState(); renderGoals(); renderHome();
+};
 
-// ══════════════════════════════════════════════════
+// ══════════════════════════════════════════
 // PROJECTS
-// ══════════════════════════════════════════════════
+// ══════════════════════════════════════════
 function renderProjects() {
-  const tbody = document.getElementById('proj-tbody');
-  tbody.innerHTML = S.projects.map(p => {
-    const dl = p.deadline ? new Date(p.deadline+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—';
-    const statuses = ['active','in-progress','on-hold','complete'];
-    const slabels = { active:'Active','in-progress':'In Progress','on-hold':'On Hold',complete:'Complete' };
-    const opts = statuses.map(s => `<option value="${s}" ${p.status===s?'selected':''}>${slabels[s]}</option>`).join('');
-    const hlBadge = p.highLeverage ? `<span class="tag tag-red" style="font-size:9px;cursor:pointer;" onclick="toggleHL('${p.id}')" title="High leverage — this is your 20%">★ High Leverage</span>` : `<span class="tag tag-gray" style="font-size:9px;cursor:pointer;" onclick="toggleHL('${p.id}')" title="Mark as high leverage">☆ Mark High</span>`;
-    return `<tr>
-      <td><div class="proj-name">${p.name}</div><div class="proj-note">${p.notes}</div></td>
-      <td style="color:var(--ink-3);font-style:italic;font-size:12px;">${p.owner}</td>
-      <td><input type="date" value="${p.deadline}" onchange="updateDeadline('${p.id}',this.value)" style="border:1px solid var(--rule);border-radius:4px;padding:5px 8px;font-size:12px;background:var(--bg);color:var(--ink-2);font-family:var(--mono);"></td>
-      <td><select class="status-sel" onchange="updateStatus('${p.id}',this.value)">${opts}</select></td>
-      <td>${hlBadge}</td>
-    </tr>`;
+  document.getElementById("proj-tbody").innerHTML = S.projects.map(p => {
+    const dl = p.deadline ? new Date(p.deadline+'T00:00:00').toLocaleDateString("en-US",{month:'short',day:'numeric',year:'numeric'}) : '—';
+    const opts = ['active','in-progress','on-hold','complete'].map(s=>`<option value="${s}" ${p.status===s?'selected':''}>${{active:'Active','in-progress':'In Progress','on-hold':'On Hold',complete:'Complete'}[s]}</option>`).join('');
+    const hl = p.highLeverage ? `<span class="tag tag-red" style="font-size:9px;cursor:pointer;" onclick="toggleHL('${p.id}')">★ High Leverage</span>` : `<span class="tag tag-gray" style="font-size:9px;cursor:pointer;" onclick="toggleHL('${p.id}')">☆ Mark High</span>`;
+    return `<tr><td><div class="proj-name">${p.name}</div><div class="proj-note">${p.notes}</div></td><td style="color:var(--ink-3);font-style:italic;font-size:12px;">${p.owner}</td><td><input type="date" value="${p.deadline}" onchange="updateDeadline('${p.id}',this.value)" style="border:1px solid var(--rule);border-radius:4px;padding:5px 8px;font-size:12px;font-family:var(--mono);background:var(--bg);"></td><td><select class="status-sel" onchange="updateStatus('${p.id}',this.value)">${opts}</select></td><td>${hl}</td></tr>`;
   }).join('');
 }
 
-function updateStatus(id, val) {
-  const p = S.projects.find(x => x.id === id);
-  if (p) { p.status = val; save(); renderProjects(); renderHome(); }
-}
-function updateDeadline(id, val) {
-  const p = S.projects.find(x => x.id === id);
-  if (p) { p.deadline = val; save(); }
-}
-function toggleHL(id) {
-  const p = S.projects.find(x => x.id === id);
-  if (p) { p.highLeverage = !p.highLeverage; save(); renderProjects(); renderHome(); }
-}
+window.updateStatus = async (id,val) => { const p=S.projects.find(x=>x.id===id); if(p){p.status=val;await saveState();renderProjects();renderHome();} };
+window.updateDeadline = async (id,val) => { const p=S.projects.find(x=>x.id===id); if(p){p.deadline=val;await saveState();} };
+window.toggleHL = async (id) => { const p=S.projects.find(x=>x.id===id); if(p){p.highLeverage=!p.highLeverage;await saveState();renderProjects();renderHome();} };
 
-let addProjOpen = false;
-function toggleAddProj() {
-  addProjOpen = !addProjOpen;
-  document.getElementById('add-proj-form').classList.toggle('open', addProjOpen);
-}
-function addProject() {
-  const name = document.getElementById('np-name').value.trim();
-  if (!name) return;
-  S.projects.push({ id:'p'+Date.now(), name, owner:document.getElementById('np-owner').value.trim()||'—', deadline:document.getElementById('np-deadline').value||'', status:document.getElementById('np-status').value, notes:'', highLeverage:false });
-  save(); renderProjects(); toggleAddProj();
-  ['np-name','np-owner','np-deadline'].forEach(id => document.getElementById(id).value = '');
-}
+let addProjOpen=false;
+window.toggleAddProj = () => { addProjOpen=!addProjOpen; document.getElementById("add-proj-form").classList.toggle("open",addProjOpen); };
+window.addProject = async () => {
+  const name=document.getElementById("np-name").value.trim();
+  if(!name) return;
+  S.projects.push({id:'p'+Date.now(),name,owner:document.getElementById("np-owner").value.trim()||'—',deadline:document.getElementById("np-deadline").value||'',status:document.getElementById("np-status").value,notes:'',highLeverage:false});
+  await saveState(); renderProjects(); toggleAddProj();
+  ['np-name','np-owner','np-deadline'].forEach(id=>document.getElementById(id).value='');
+};
 
-// ══════════════════════════════════════════════════
+// ══════════════════════════════════════════
 // TEAM
-// ══════════════════════════════════════════════════
+// ══════════════════════════════════════════
 function renderTeam() {
-  const el = document.getElementById('team-list');
-  const rel = S.team.filter(t => t.team === 'Partner Relations');
-  const com = S.team.filter(t => t.team === 'Partner Communications');
-  el.innerHTML =
-    '<div class="team-divider">Partner Relations</div>' + rel.map(personCard).join('') +
-    '<div class="team-divider" style="margin-top:20px;">Partner Communications</div>' + com.map(personCard).join('');
+  // Partner Care team with full check-ins
+  const rel = PC_TEAM.filter(t=>t.team==='Partner Relations');
+  const com = PC_TEAM.filter(t=>t.team==='Partner Communications');
+  document.getElementById("pc-team-list").innerHTML =
+    '<div class="team-divider">Partner Relations</div>' + rel.map(t=>pcTeamCard(t)).join('') +
+    '<div class="team-divider" style="margin-top:20px;">Partner Communications</div>' + com.map(t=>pcTeamCard(t)).join('');
+
+  // Full HeartCry staff — family + prayer only
+  document.getElementById("full-staff-list").innerHTML = FULL_STAFF.map(s=>staffCard(s)).join('');
+
+  // Prayer requests
+  renderPrayerRequests();
 }
 
-function personCard(t) {
+function pcTeamCard(t) {
+  const td = S.teamData[t.id] || {};
   const init = t.name.slice(0,2).toUpperCase();
-  const lastCI = t.lastCheckin ? `Last: ${t.lastCheckin}` : 'No check-in yet';
-  const overdue = !t.lastCheckin || (new Date() - new Date(t.lastCheckin)) / (1000*60*60*24) > 14;
-  return `
-  <div class="person-card">
-    <div class="person-header" onclick="togglePerson('${t.id}')">
-      <div class="person-left">
-        <div class="avatar">${init}</div>
-        <div>
-          <div class="person-name">${t.name} ${t.pt ? '<span class="tag tag-amber" style="font-size:9px;">Part-Time</span>' : ''}</div>
-          <div class="person-title">${t.title}</div>
-        </div>
-      </div>
-      <div class="person-right">
-        <div class="checkin-status" style="${overdue?'color:var(--amber)':''}">${lastCI}${overdue?' ⚠':''}
-        </div>
-        <div class="chevron" id="chev-${t.id}">▼</div>
-      </div>
+  const lastCI = td.lastCheckin || null;
+  const overdue = !lastCI || (new Date()-new Date(lastCI))/(1000*60*60*24)>14;
+  return `<div class="person-card">
+    <div class="person-header" onclick="togglePerson('pc-${t.id}')">
+      <div class="person-left"><div class="avatar">${init}</div><div><div class="person-name">${t.name}</div><div class="person-title">${t.title}</div></div></div>
+      <div class="person-right"><div class="ci-status ${overdue?'overdue':''}">${lastCI?'Last: '+lastCI:'No check-in yet'}${overdue?' ⚠':''}</div><div class="chevron" id="chev-pc-${t.id}">▼</div></div>
     </div>
-    <div class="person-body" id="body-${t.id}">
-      <div style="font-size:10px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:var(--red);margin-bottom:12px;">Biweekly Check-in — Start · Stop · Keep</div>
+    <div class="person-body" id="body-pc-${t.id}">
+      <div class="ci-section-label">Biweekly Check-in — Start · Stop · Keep</div>
       <div class="ci-grid">
-        <div class="ci-field">
-          <label>Start — What should begin?</label>
-          <textarea id="ci-s-${t.id}" oninput="saveCI('${t.id}','start',this.value)" placeholder="New habits, practices, or responsibilities...">${t.checkin.start||''}</textarea>
-        </div>
-        <div class="ci-field">
-          <label>Stop — What should stop?</label>
-          <textarea id="ci-x-${t.id}" oninput="saveCI('${t.id}','stop',this.value)" placeholder="Behaviors hindering effectiveness or team health...">${t.checkin.stop||''}</textarea>
-        </div>
-        <div class="ci-field">
-          <label>Keep — What is working?</label>
-          <textarea id="ci-k-${t.id}" oninput="saveCI('${t.id}','keep',this.value)" placeholder="Habits and patterns worth sustaining...">${t.checkin.keep||''}</textarea>
-        </div>
-        <div class="ci-field">
-          <label>Notes & Follow-up</label>
-          <textarea id="ci-n-${t.id}" oninput="saveCI('${t.id}','notes',this.value)" placeholder="Ideas shared, support needed, anything to follow up...">${t.checkin.notes||''}</textarea>
-        </div>
+        <div class="ci-field"><label>Start — What should begin?</label><textarea oninput="saveCI('${t.id}','start',this.value)" placeholder="New habits or responsibilities...">${td.start||''}</textarea></div>
+        <div class="ci-field"><label>Stop — What should stop?</label><textarea oninput="saveCI('${t.id}','stop',this.value)" placeholder="Behaviors hindering effectiveness...">${td.stop||''}</textarea></div>
+        <div class="ci-field"><label>Keep — What is working?</label><textarea oninput="saveCI('${t.id}','keep',this.value)" placeholder="Patterns worth sustaining...">${td.keep||''}</textarea></div>
+        <div class="ci-field"><label>Notes & Follow-up</label><textarea oninput="saveCI('${t.id}','notes',this.value)" placeholder="Ideas, support needed, follow-ups...">${td.notes||''}</textarea></div>
       </div>
-      <div class="save-row">
-        <button class="btn btn-red btn-sm" onclick="logCheckin('${t.id}')">✓ Log Check-in Today</button>
-        <span class="saved-msg" id="sm-${t.id}">Saved ✓</span>
-      </div>
-
-      <div class="prayer-row">
-        <div class="prayer-row-label">Prayer & Family</div>
-        <div class="prayer-inputs">
-          <div><div class="pi-label">Spouse</div><input type="text" value="${t.spouse||''}" oninput="saveFamily('${t.id}','spouse',this.value)" placeholder="Spouse name"></div>
-          <div><div class="pi-label">Children</div><input type="text" value="${t.kids||''}" oninput="saveFamily('${t.id}','kids',this.value)" placeholder="Children's names"></div>
-          <div><div class="pi-label">Current Prayer Request</div><input type="text" value="${t.prayer||''}" oninput="saveFamily('${t.id}','prayer',this.value)" placeholder="Current request..."></div>
+      <div class="save-row"><button class="btn btn-red btn-sm" onclick="logCheckin('${t.id}')">✓ Log Check-in Today</button><span class="saved-msg" id="sm-${t.id}">Saved ✓</span></div>
+      <div class="prayer-box">
+        <div class="prayer-box-label">Prayer & Family</div>
+        <div class="prayer-family-row">
+          <div><div class="pi-label">Spouse</div><input type="text" value="${td.spouse||''}" oninput="saveFamily('${t.id}','spouse',this.value)" placeholder="Spouse name"></div>
+          <div><div class="pi-label">Children</div><input type="text" value="${td.kids||''}" oninput="saveFamily('${t.id}','kids',this.value)" placeholder="Children's names"></div>
         </div>
+        <div class="pi-label" style="margin-bottom:4px;">Current Prayer Request</div>
+        <textarea class="prayer-request-field" oninput="saveFamily('${t.id}','prayer',this.value)" placeholder="Current prayer request...">${td.prayer||''}</textarea>
       </div>
     </div>
   </div>`;
 }
 
-function togglePerson(id) {
-  const b = document.getElementById('body-'+id);
-  const c = document.getElementById('chev-'+id);
-  const open = b.classList.contains('open');
-  b.classList.toggle('open', !open);
-  c.classList.toggle('open', !open);
+function staffCard(s) {
+  const sd = S.staffData[s.id] || {};
+  const spouse = sd.spouse !== undefined ? sd.spouse : (s.spouse||'');
+  const kids = sd.kids !== undefined ? sd.kids : (s.children||[]).join(', ');
+  const prayer = sd.prayer || '';
+  const init = s.name.slice(0,2).toUpperCase();
+  return `<div class="person-card">
+    <div class="person-header" onclick="togglePerson('sf-${s.id}')">
+      <div class="person-left"><div class="avatar" style="background:#444;">${init}</div><div><div class="person-name">${s.name}</div><div class="person-title">${spouse?'Spouse: '+spouse:''} ${kids?'· '+kids:''}</div></div></div>
+      <div class="person-right"><div class="chevron" id="chev-sf-${s.id}">▼</div></div>
+    </div>
+    <div class="person-body" id="body-sf-${s.id}">
+      <div class="prayer-box">
+        <div class="prayer-box-label">Family & Prayer</div>
+        <div class="prayer-family-row">
+          <div><div class="pi-label">Spouse</div><input type="text" value="${spouse}" oninput="saveStaff('${s.id}','spouse',this.value)" placeholder="Spouse name"></div>
+          <div><div class="pi-label">Children</div><input type="text" value="${kids}" oninput="saveStaff('${s.id}','kids',this.value)" placeholder="Children's names"></div>
+        </div>
+        <div class="pi-label" style="margin-bottom:4px;">Prayer Request</div>
+        <textarea class="prayer-request-field" oninput="saveStaff('${s.id}','prayer',this.value)" placeholder="Current prayer request...">${prayer}</textarea>
+      </div>
+    </div>
+  </div>`;
 }
-function saveCI(id, field, val) {
-  const t = S.team.find(x => x.id === id);
-  if (t) { t.checkin[field] = val; save(); }
-}
-function saveFamily(id, field, val) {
-  const t = S.team.find(x => x.id === id);
-  if (t) { t[field] = val; save(); }
-}
-function logCheckin(id) {
-  const t = S.team.find(x => x.id === id);
-  if (!t) return;
-  t.lastCheckin = new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-  save();
-  const sm = document.getElementById('sm-'+id);
-  if (sm) { sm.classList.add('show'); setTimeout(()=>sm.classList.remove('show'),2000); }
+
+window.togglePerson = (id) => {
+  const b=document.getElementById('body-'+id);
+  const c=document.getElementById('chev-'+id);
+  if(!b||!c) return;
+  const open=b.classList.contains('open');
+  b.classList.toggle('open',!open);
+  c.classList.toggle('open',!open);
+};
+
+let ciTimers = {};
+window.saveCI = (id, field, val) => {
+  if(!S.teamData[id]) S.teamData[id]={};
+  S.teamData[id][field]=val;
+  clearTimeout(ciTimers[id]);
+  ciTimers[id]=setTimeout(()=>saveState(),1000);
+};
+window.saveFamily = (id, field, val) => {
+  if(!S.teamData[id]) S.teamData[id]={};
+  S.teamData[id][field]=val;
+  clearTimeout(ciTimers[id]);
+  ciTimers[id]=setTimeout(()=>saveState(),1000);
+};
+window.saveStaff = (id, field, val) => {
+  if(!S.staffData[id]) S.staffData[id]={};
+  S.staffData[id][field]=val;
+  clearTimeout(ciTimers['sf-'+id]);
+  ciTimers['sf-'+id]=setTimeout(()=>saveState(),1000);
+};
+window.logCheckin = async (id) => {
+  if(!S.teamData[id]) S.teamData[id]={};
+  S.teamData[id].lastCheckin=new Date().toLocaleDateString("en-US",{month:'short',day:'numeric',year:'numeric'});
+  await saveState();
+  const sm=document.getElementById('sm-'+id);
+  if(sm){sm.classList.add('show');setTimeout(()=>sm.classList.remove('show'),2000);}
   renderTeam(); renderHome();
+};
+
+// ══════════════════════════════════════════
+// PRAYER REQUESTS
+// ══════════════════════════════════════════
+function renderPrayerRequests() {
+  const el = document.getElementById("pr-list");
+  if(!S.prayerRequests||!S.prayerRequests.length){
+    el.innerHTML='<div class="empty">No prayer requests yet. Add one above.</div>';
+    return;
+  }
+  el.innerHTML = S.prayerRequests.map((pr,i)=>`
+    <div class="pr-card ${pr.cat}">
+      <button class="pr-del" onclick="delPR(${i})">×</button>
+      <div class="pr-top">
+        <div class="pr-title">${pr.title}</div>
+        <span class="pr-cat ${pr.cat}">${pr.cat}</span>
+      </div>
+      <textarea class="pr-notes" placeholder="Prayer notes..." oninput="savePRNote(${i},this.value)">${pr.notes||''}</textarea>
+      <div class="pr-date">Added ${pr.added||'recently'}</div>
+      <button class="pr-prayed-btn ${pr.prayed?'done':''}" onclick="togglePRPrayed(${i})">${pr.prayed?'✓ Prayed':'♥ Mark as prayed'}</button>
+    </div>`).join('');
 }
 
-// ══════════════════════════════════════════════════
+window.addPrayerRequest = async () => {
+  const title=document.getElementById("pr-title").value.trim();
+  if(!title) return;
+  const cat=document.getElementById("pr-cat").value;
+  if(!S.prayerRequests) S.prayerRequests=[];
+  S.prayerRequests.push({id:'pr'+Date.now(),title,cat,notes:'',prayed:false,added:new Date().toLocaleDateString("en-US",{month:'short',day:'numeric',year:'numeric'})});
+  document.getElementById("pr-title").value='';
+  await saveState(); renderPrayerRequests();
+};
+
+let prTimers={};
+window.savePRNote = (i,val) => {
+  if(S.prayerRequests[i]){S.prayerRequests[i].notes=val; clearTimeout(prTimers[i]); prTimers[i]=setTimeout(()=>saveState(),1000);}
+};
+window.togglePRPrayed = async (i) => {
+  if(S.prayerRequests[i]){S.prayerRequests[i].prayed=!S.prayerRequests[i].prayed; await saveState(); renderPrayerRequests();}
+};
+window.delPR = async (i) => {
+  if(!confirm("Remove this prayer request?")) return;
+  S.prayerRequests.splice(i,1); await saveState(); renderPrayerRequests();
+};
+
+// ══════════════════════════════════════════
 // PRAYER MODAL
-// ══════════════════════════════════════════════════
-function openPrayer() {
-  const content = document.getElementById('prayer-content');
-  content.innerHTML = S.team.map(t => {
-    const fam = [t.spouse?`Spouse: ${t.spouse}`:'', t.kids?`Children: ${t.kids}`:''].filter(Boolean).join(' · ');
-    return `
-    <div class="prayer-entry">
+// ══════════════════════════════════════════
+window.openPrayerModal = async () => {
+  const wk = currentWeekKey();
+  S.prayerDoneWeek = wk;
+  await saveState();
+
+  let html = '';
+
+  // Partner Care team
+  html += '<div class="pr-section-head">Partner Care Team</div>';
+  PC_TEAM.forEach(t => {
+    const td = S.teamData[t.id]||{};
+    const fam = [td.spouse?`Spouse: ${td.spouse}`:'', td.kids?`Children: ${td.kids}`:''].filter(Boolean).join(' · ');
+    html += `<div class="prayer-entry">
       <div class="pe-name">${t.name}</div>
-      <div class="pe-title">${t.title}${t.pt?' (Part-Time)':''}</div>
-      ${fam ? `<div class="pe-family">${fam}</div>` : ''}
-      <div class="pe-request ${t.prayer?'':'pe-empty'}">${t.prayer||'No prayer request recorded yet.'}</div>
+      <div class="pe-title">${t.title}</div>
+      ${fam?`<div class="pe-family">${fam}</div>`:''}
+      <div class="${td.prayer?'pe-request':'pe-empty'}">${td.prayer||'No prayer request recorded yet.'}</div>
     </div>`;
-  }).join('');
-  document.getElementById('modal-bg').classList.add('open');
-  // Mark prayer done for this week
-  S.prayerDoneWeek = currentWeekKey();
-  S.prayerDone = true;
-  save(); renderHome();
-}
-function closePrayer() { document.getElementById('modal-bg').classList.remove('open'); }
-document.getElementById('modal-bg').addEventListener('click', e => { if (e.target === document.getElementById('modal-bg')) closePrayer(); });
+  });
 
-// ══════════════════════════════════════════════════
+  // Full staff with requests
+  const staffWithRequests = FULL_STAFF.filter(s=>{const sd=S.staffData[s.id]||{};return sd.prayer;});
+  if(staffWithRequests.length) {
+    html += '<div class="pr-section-head">HeartCry Staff</div>';
+    staffWithRequests.forEach(s => {
+      const sd = S.staffData[s.id]||{};
+      const spouse = sd.spouse||s.spouse||'';
+      const kids = sd.kids||(s.children||[]).join(', ');
+      const fam = [spouse?`Spouse: ${spouse}`:'', kids?`Children: ${kids}`:''].filter(Boolean).join(' · ');
+      html += `<div class="prayer-entry">
+        <div class="pe-name">${s.name}</div>
+        ${fam?`<div class="pe-family">${fam}</div>`:''}
+        <div class="pe-request">${sd.prayer}</div>
+      </div>`;
+    });
+  }
+
+  // Prayer requests
+  const activePR = (S.prayerRequests||[]).filter(pr=>!pr.prayed);
+  if(activePR.length) {
+    html += '<div class="pr-section-head">Prayer Requests</div>';
+    activePR.forEach(pr => {
+      html += `<div class="prayer-entry">
+        <div class="pe-name">${pr.title} <span class="tag tag-${pr.cat==='department'?'blue':pr.cat==='country'?'red':pr.cat==='staff'?'green':'gray'}" style="font-size:9px;margin-left:6px;">${pr.cat}</span></div>
+        <div class="${pr.notes?'pe-request':'pe-empty'}">${pr.notes||'No notes added yet.'}</div>
+      </div>`;
+    });
+  }
+
+  document.getElementById("modal-content").innerHTML = html;
+  document.getElementById("modal-bg").classList.add("open");
+  renderHome();
+};
+
+window.closePrayerModal = () => { document.getElementById("modal-bg").classList.remove("open"); };
+document.getElementById("modal-bg").addEventListener("click", e => { if(e.target===document.getElementById("modal-bg")) closePrayerModal(); });
+
+// ══════════════════════════════════════════
 // CORE VALUES
-// ══════════════════════════════════════════════════
+// ══════════════════════════════════════════
 function renderCoreValues() {
-  const cur = S.cvIndex % S.coreValues.length;
-  const prev = (S.cvIndex - 1 + S.coreValues.length) % S.coreValues.length;
-  const nxt = (S.cvIndex + 1) % S.coreValues.length;
+  const cur = S.cvIndex % CV_DATA.length;
+  const prev = (S.cvIndex-1+CV_DATA.length) % CV_DATA.length;
+  const nxt = (S.cvIndex+1) % CV_DATA.length;
 
-  // Rotation summary
-  document.getElementById('cv-rotation').innerHTML = `
-    <div class="cv-slot prev">
-      <div class="cv-slot-label">Last Covered</div>
-      <div class="cv-slot-name">${S.coreValues[prev].name}</div>
-      <div class="cv-slot-tag">${S.coreValues[prev].tagline}</div>
-      <div class="cv-slot-date">${S.coreValues[prev].lastDiscussed||'—'}</div>
-    </div>
-    <div class="cv-slot current">
-      <div class="cv-slot-label">Up Next</div>
-      <div class="cv-slot-name" style="color:var(--red);">${S.coreValues[cur].name}</div>
-      <div class="cv-slot-tag">${S.coreValues[cur].tagline}</div>
-      <div class="cv-slot-date">${S.coreValues[cur].lastDiscussed||'Not yet discussed'}</div>
-    </div>
-    <div class="cv-slot next">
-      <div class="cv-slot-label">Following</div>
-      <div class="cv-slot-name">${S.coreValues[nxt].name}</div>
-      <div class="cv-slot-tag">${S.coreValues[nxt].tagline}</div>
-      <div class="cv-slot-date">${S.coreValues[nxt].lastDiscussed||'—'}</div>
-    </div>
+  document.getElementById("cv-rotation").innerHTML = `
+    <div class="cv-slot prev"><div class="cv-slot-label">Last Covered</div><div class="cv-slot-name">${CV_DATA[prev].name}</div><div class="cv-slot-tag">${CV_DATA[prev].tagline}</div><div class="cv-slot-date">${S.cvDates[CV_DATA[prev].id]||'—'}</div></div>
+    <div class="cv-slot current"><div class="cv-slot-label" style="color:var(--red);">Up Next</div><div class="cv-slot-name" style="color:var(--red);">${CV_DATA[cur].name}</div><div class="cv-slot-tag">${CV_DATA[cur].tagline}</div><div class="cv-slot-date">${S.cvDates[CV_DATA[cur].id]||'Not yet discussed'}</div></div>
+    <div class="cv-slot next"><div class="cv-slot-label">Following</div><div class="cv-slot-name">${CV_DATA[nxt].name}</div><div class="cv-slot-tag">${CV_DATA[nxt].tagline}</div><div class="cv-slot-date">${S.cvDates[CV_DATA[nxt].id]||'—'}</div></div>
   `;
 
-  // Full list
-  document.getElementById('cv-all-list').innerHTML = S.coreValues.map((cv, i) => {
-    const isCur = i === cur;
-    return `
-    <div class="cv-item ${isCur?'current-cv':''}">
-      <div class="cv-item-left">
-        <div class="cv-idx">${i+1}</div>
-        <div>
-          <span class="cv-name-big">${cv.name}</span>
-          <span class="cv-tagline-sm">${cv.tagline}</span>
-        </div>
-      </div>
+  document.getElementById("cv-all-list").innerHTML = CV_DATA.map((cv,i)=>{
+    const isCur=i===cur;
+    return `<div class="cv-item ${isCur?'current-cv':''}">
+      <div class="cv-item-left"><div class="cv-idx">${i+1}</div><div><span class="cv-name-big">${cv.name}</span><span class="cv-tagline-sm">${cv.tagline}</span></div></div>
       <div class="cv-item-right">
-        ${isCur ? '<span class="tag tag-red">Up Next</span>' : ''}
-        <span style="font-family:var(--mono);font-size:11px;color:var(--ink-3);">${cv.lastDiscussed||'—'}</span>
+        ${isCur?'<span class="tag tag-red">Up Next</span>':''}
+        <span style="font-family:var(--mono);font-size:11px;color:var(--ink-3);">${S.cvDates[cv.id]||'—'}</span>
         <button class="cv-log-btn" onclick="logCV('${cv.id}')">✓ Log</button>
       </div>
     </div>`;
   }).join('');
 }
 
-function logCV(id) {
-  const cv = S.coreValues.find(x => x.id === id);
-  if (!cv) return;
-  const today = new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-  cv.lastDiscussed = today;
-  if (!cv.discussions) cv.discussions = [];
-  cv.discussions.push(today);
-  const curId = S.coreValues[S.cvIndex % S.coreValues.length].id;
-  if (id === curId) S.cvIndex = (S.cvIndex + 1) % S.coreValues.length;
-  save(); renderCoreValues(); renderHome();
-}
+window.logCV = async (id) => {
+  const today = new Date().toLocaleDateString("en-US",{month:'short',day:'numeric',year:'numeric'});
+  S.cvDates[id] = today;
+  const curId = CV_DATA[S.cvIndex%CV_DATA.length].id;
+  if(id===curId) S.cvIndex=(S.cvIndex+1)%CV_DATA.length;
+  await saveState(); renderCoreValues(); renderHome();
+};
 
-// ══════════════════════════════════════════════════
+// ══════════════════════════════════════════
 // NAV
-// ══════════════════════════════════════════════════
+// ══════════════════════════════════════════
 const TABS = ['home','goals','projects','team','values'];
-function go(tab) {
-  document.querySelectorAll('.panel').forEach(p => p.classList.remove('on'));
-  document.querySelectorAll('.nt').forEach(n => n.classList.remove('on'));
+window.go = (tab) => {
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.nt').forEach(n=>n.classList.remove('on'));
   document.getElementById('panel-'+tab).classList.add('on');
   document.querySelectorAll('.nt')[TABS.indexOf(tab)].classList.add('on');
-  if (tab==='home') renderHome();
-  if (tab==='goals') renderGoals();
-  if (tab==='projects') renderProjects();
-  if (tab==='team') renderTeam();
-  if (tab==='values') renderCoreValues();
+  if(tab==='home') renderHome();
+  if(tab==='goals') renderGoals();
+  if(tab==='projects') renderProjects();
+  if(tab==='team') renderTeam();
+  if(tab==='values') renderCoreValues();
+};
+
+function renderAll(){
+  renderHome(); renderGoals(); renderProjects(); renderTeam(); renderCoreValues();
 }
 
-// ══════════════════════════════════════════════════
+// ══════════════════════════════════════════
 // DATE
-// ══════════════════════════════════════════════════
-function updateDate() {
-  document.getElementById('live-date').textContent =
-    new Date().toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});
+// ══════════════════════════════════════════
+function updateDate(){
+  document.getElementById("tb-date").textContent=new Date().toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric",year:"numeric"});
 }
-updateDate();
-setInterval(updateDate, 60000);
-
-// ══════════════════════════════════════════════════
-// INIT
-// ══════════════════════════════════════════════════
-renderHome();
-renderGoals();
-renderProjects();
-renderTeam();
-renderCoreValues();
+updateDate(); setInterval(updateDate,60000);
 </script>
 </body>
 </html>
