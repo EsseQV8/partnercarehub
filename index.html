@@ -464,8 +464,12 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:10
   <!-- Full HeartCry Staff -->
   <div style="margin-top:28px;">
     <div class="sec-title">Full HeartCry Staff — Family & Prayer</div>
-    <div style="font-size:13px;color:var(--ink-3);margin-bottom:14px;font-style:italic;">Add family info and prayer requests for all staff. Included in the Pray for All view.</div>
+    <div style="font-size:13px;color:var(--ink-3);margin-bottom:14px;font-style:italic;">Edit any name, spouse, or children. Included in the Pray for All view.</div>
     <div id="full-staff-list"></div>
+    <div style="margin-top:10px;display:flex;gap:8px;">
+      <input id="new-staff-name" type="text" placeholder="Add new staff member name..." style="flex:1;border:1px solid var(--rule);border-radius:var(--r);padding:9px 12px;font-family:var(--sans);font-size:13px;background:var(--card);color:var(--ink);">
+      <button class="btn btn-red btn-sm" onclick="addStaffMember()">+ Add</button>
+    </div>
   </div>
 
   <!-- Prayer Requests section -->
@@ -938,25 +942,54 @@ function staffCard(s) {
   const spouse = sd.spouse !== undefined ? sd.spouse : (s.spouse||'');
   const kids = sd.kids !== undefined ? sd.kids : (s.children||[]).join(', ');
   const prayer = sd.prayer || '';
-  const init = s.name.slice(0,2).toUpperCase();
+  const displayName = sd.name || s.name;
+  const init = displayName.slice(0,2).toUpperCase();
   return `<div class="person-card">
     <div class="person-header" onclick="togglePerson('sf-${s.id}')">
-      <div class="person-left"><div class="avatar" style="background:#444;">${init}</div><div><div class="person-name">${s.name}</div><div class="person-title">${spouse?'Spouse: '+spouse:''} ${kids?'· '+kids:''}</div></div></div>
-      <div class="person-right"><div class="chevron" id="chev-sf-${s.id}">▼</div></div>
+      <div class="person-left"><div class="avatar" style="background:#444;">${init}</div><div><div class="person-name">${displayName}</div><div class="person-title">${spouse?'Spouse: '+spouse:''} ${kids?'· '+kids:''}</div></div></div>
+      <div class="person-right">
+        <button onclick="event.stopPropagation();delStaff('${s.id}')" style="background:none;border:none;cursor:pointer;color:var(--ink-3);font-size:16px;padding:4px 6px;border-radius:4px;" title="Remove">×</button>
+        <div class="chevron" id="chev-sf-${s.id}">▼</div>
+      </div>
     </div>
     <div class="person-body" id="body-sf-${s.id}">
       <div class="prayer-box">
-        <div class="prayer-box-label">Family & Prayer</div>
-        <div class="prayer-family-row">
+        <div class="prayer-box-label">Name & Family</div>
+        <div class="prayer-family-row" style="grid-template-columns:1fr 1fr;margin-bottom:8px;">
+          <div><div class="pi-label">Full Name</div><input type="text" value="${displayName}" oninput="saveStaff('${s.id}','name',this.value)" placeholder="Full name"></div>
           <div><div class="pi-label">Spouse</div><input type="text" value="${spouse}" oninput="saveStaff('${s.id}','spouse',this.value)" placeholder="Spouse name"></div>
-          <div><div class="pi-label">Children</div><input type="text" value="${kids}" oninput="saveStaff('${s.id}','kids',this.value)" placeholder="Children's names"></div>
         </div>
-        <div class="pi-label" style="margin-bottom:4px;">Prayer Request</div>
+        <div class="prayer-family-row" style="grid-template-columns:1fr;">
+          <div><div class="pi-label">Children (comma separated)</div><input type="text" value="${kids}" oninput="saveStaff('${s.id}','kids',this.value)" placeholder="e.g. Anna, James, Ruth"></div>
+        </div>
+        <div class="pi-label" style="margin-bottom:4px;margin-top:8px;">Prayer Request</div>
         <textarea class="prayer-request-field" oninput="saveStaff('${s.id}','prayer',this.value)" placeholder="Current prayer request...">${prayer}</textarea>
       </div>
     </div>
   </div>`;
 }
+
+window.addStaffMember = async () => {
+  const input = document.getElementById("new-staff-name");
+  const name = input.value.trim();
+  if(!name) return;
+  const newId = 's' + Date.now();
+  // Add to FULL_STAFF array at runtime
+  FULL_STAFF.push({ id: newId, name, spouse:'', children:[] });
+  if(!S.staffData[newId]) S.staffData[newId] = {};
+  input.value = "";
+  await saveState();
+  renderTeam();
+};
+
+window.delStaff = async (id) => {
+  if(!confirm("Remove this person from the staff list?")) return;
+  const idx = FULL_STAFF.findIndex(s => s.id === id);
+  if(idx > -1) FULL_STAFF.splice(idx, 1);
+  delete S.staffData[id];
+  await saveState();
+  renderTeam();
+};
 
 window.togglePerson = (id) => {
   const b=document.getElementById('body-'+id);
