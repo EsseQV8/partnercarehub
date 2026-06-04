@@ -1155,45 +1155,81 @@ window.openPrayerModal = async () => {
   S.prayerDoneWeek = wk;
   await saveState();
 
-  let html = '';
+  // Map PC team names to their FULL_STAFF record for family data
+  const nameToStaff = {};
+  FULL_STAFF.forEach(s => {
+    const firstName = s.name.split(' ')[0].toLowerCase();
+    nameToStaff[firstName] = s;
+  });
 
-  // Helper to build one prayer entry
-  function prayerEntry(name, title, spouse, kids, prayer) {
-    const kidsStr = Array.isArray(kids) ? kids.join(', ') : (kids||'');
-    const spouseStr = spouse||'';
+  function buildEntry(displayName, title, staffRecord, teamDataRecord) {
+    const td = teamDataRecord || {};
+    const sd = staffRecord ? (S.staffData[staffRecord.id]||{}) : {};
+    // Priority: manually edited data in staffData/teamData, then defaults from FULL_STAFF
+    const spouse = td.spouse || sd.spouse || (staffRecord ? staffRecord.spouse : '') || '';
+    const kidsRaw = td.kids || sd.kids || (staffRecord ? (staffRecord.children||[]).join(', ') : '') || '';
+    const prayer = td.prayer || sd.prayer || '';
+    const name = sd.name || displayName;
     return `<div class="prayer-entry">
-      <div class="pe-name">${name}${title?`<span style="font-size:12px;color:var(--ink-3);font-style:italic;font-weight:400;margin-left:8px;">${title}</span>`:''}</div>
-      ${spouseStr?`<div class="pe-family">Spouse: ${spouseStr}</div>`:''}
-      ${kidsStr?`<div class="pe-family">Children: ${kidsStr}</div>`:''}
-      <div class="${prayer?'pe-request':'pe-empty'}">${prayer||'No prayer request recorded yet.'}</div>
+      <div class="pe-name">${name}${title ? `<span style="font-size:12px;color:var(--ink-3);font-style:italic;font-weight:400;margin-left:8px;">${title}</span>` : ''}</div>
+      ${spouse ? `<div class="pe-family"><strong>Spouse:</strong> ${spouse}</div>` : ''}
+      ${kidsRaw ? `<div class="pe-family"><strong>Children:</strong> ${kidsRaw}</div>` : ''}
+      <div class="${prayer ? 'pe-request' : 'pe-empty'}">${prayer || 'No prayer request recorded yet.'}</div>
     </div>`;
   }
 
-  // Partner Care team
-  html += '<div class="pr-section-head">Partner Care Team</div>';
-  PC_TEAM.forEach(t => {
-    const td = S.teamData[t.id]||{};
-    html += prayerEntry(t.name, t.title, td.spouse||'', td.kids||'', td.prayer||'');
+  // Track which FULL_STAFF ids are already shown via PC_TEAM
+  const shownStaffIds = new Set();
+
+  let html = '';
+
+  // Partner Relations
+  const relTeam = PC_TEAM.filter(t => t.team === 'Partner Relations');
+  html += '<div class="pr-section-head">Partner Relations</div>';
+  relTeam.forEach(t => {
+    const td = S.teamData[t.id] || {};
+    const firstName = t.name.split(' ')[0].toLowerCase();
+    const staffRecord = nameToStaff[firstName] || null;
+    if(staffRecord) shownStaffIds.add(staffRecord.id);
+    html += buildEntry(t.name, t.title, staffRecord, td);
   });
 
-  // Full HeartCry staff — show everyone, not just those with prayer requests
-  html += '<div class="pr-section-head">HeartCry Staff</div>';
-  FULL_STAFF.forEach(s => {
-    const sd = S.staffData[s.id]||{};
-    const spouse = sd.spouse !== undefined ? sd.spouse : (s.spouse||'');
-    const kids = sd.kids !== undefined ? sd.kids : (s.children||[]).join(', ');
-    const prayer = sd.prayer||'';
-    html += prayerEntry(sd.name||s.name, '', spouse, kids, prayer);
+  // Partner Communications
+  const comTeam = PC_TEAM.filter(t => t.team === 'Partner Communications');
+  html += '<div class="pr-section-head">Partner Communications</div>';
+  comTeam.forEach(t => {
+    const td = S.teamData[t.id] || {};
+    const firstName = t.name.split(' ')[0].toLowerCase();
+    const staffRecord = nameToStaff[firstName] || null;
+    if(staffRecord) shownStaffIds.add(staffRecord.id);
+    html += buildEntry(t.name, t.title, staffRecord, td);
+  });
+
+  // Staff — everyone in FULL_STAFF not already shown above
+  const remainingStaff = FULL_STAFF.filter(s => !shownStaffIds.has(s.id));
+  html += '<div class="pr-section-head">Staff</div>';
+  remainingStaff.forEach(s => {
+    const sd = S.staffData[s.id] || {};
+    const spouse = sd.spouse !== undefined ? sd.spouse : (s.spouse || '');
+    const kids = sd.kids !== undefined ? sd.kids : (s.children || []).join(', ');
+    const prayer = sd.prayer || '';
+    const name = sd.name || s.name;
+    html += `<div class="prayer-entry">
+      <div class="pe-name">${name}</div>
+      ${spouse ? `<div class="pe-family"><strong>Spouse:</strong> ${spouse}</div>` : ''}
+      ${kids ? `<div class="pe-family"><strong>Children:</strong> ${kids}</div>` : ''}
+      <div class="${prayer ? 'pe-request' : 'pe-empty'}">${prayer || 'No prayer request recorded yet.'}</div>
+    </div>`;
   });
 
   // Prayer requests
-  const activePR = (S.prayerRequests||[]).filter(pr=>!pr.prayed);
+  const activePR = (S.prayerRequests || []).filter(pr => !pr.prayed);
   if(activePR.length) {
     html += '<div class="pr-section-head">Prayer Requests</div>';
     activePR.forEach(pr => {
       html += `<div class="prayer-entry">
         <div class="pe-name">${pr.title} <span class="tag tag-${pr.cat==='department'?'blue':pr.cat==='country'?'red':pr.cat==='staff'?'green':'gray'}" style="font-size:9px;margin-left:6px;">${pr.cat}</span></div>
-        <div class="${pr.notes?'pe-request':'pe-empty'}">${pr.notes||'No notes added yet.'}</div>
+        <div class="${pr.notes ? 'pe-request' : 'pe-empty'}">${pr.notes || 'No notes added yet.'}</div>
       </div>`;
     });
   }
