@@ -997,8 +997,8 @@ function pcTeamCard(t) {
       <div class="prayer-box">
         <div class="prayer-box-label">Prayer & Family</div>
         <div class="prayer-family-row">
-          <div><div class="pi-label">Spouse</div><input type="text" value="${td.spouse||''}" oninput="saveFamily('${t.id}','spouse',this.value)" placeholder="Spouse name"></div>
-          <div><div class="pi-label">Children</div><input type="text" value="${td.kids||''}" oninput="saveFamily('${t.id}','kids',this.value)" placeholder="Children's names"></div>
+          <div><div class="pi-label">Spouse</div><input type="text" value="${td.spouse !== undefined && td.spouse !== '' ? td.spouse : (t.spouse||'')}" oninput="saveFamily('${t.id}','spouse',this.value)" placeholder="Spouse name"></div>
+          <div><div class="pi-label">Children</div><input type="text" value="${td.kids !== undefined && td.kids !== '' ? td.kids : (t.children||[]).join(', ')}" oninput="saveFamily('${t.id}','kids',this.value)" placeholder="Children's names"></div>
         </div>
         <div class="pi-label" style="margin-bottom:4px;">Current Prayer Request</div>
         <textarea class="prayer-request-field" oninput="saveFamily('${t.id}','prayer',this.value)" placeholder="Current prayer request...">${td.prayer||''}</textarea>
