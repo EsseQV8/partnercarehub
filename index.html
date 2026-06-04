@@ -980,9 +980,16 @@ function pcTeamCard(t) {
   const init = t.name.slice(0,2).toUpperCase();
   const lastCI = td.lastCheckin || null;
   const overdue = !lastCI || (new Date()-new Date(lastCI))/(1000*60*60*24)>14;
+  const spouse = td.spouse !== undefined && td.spouse !== '' ? td.spouse : (t.spouse||'');
+  const kids = td.kids !== undefined && td.kids !== '' ? td.kids : (t.children||[]).join(', ');
+  const familyLine = [spouse?'Spouse: '+spouse:'', kids?kids:''].filter(Boolean).join(' · ');
   return `<div class="person-card">
     <div class="person-header" onclick="togglePerson('pc-${t.id}')">
-      <div class="person-left"><div class="avatar">${init}</div><div><div class="person-name">${t.name}</div><div class="person-title">${t.title}</div></div></div>
+      <div class="person-left"><div class="avatar">${init}</div><div>
+        <div class="person-name">${t.name}</div>
+        <div class="person-title">${t.title}</div>
+        ${familyLine?`<div style="font-size:11px;color:var(--ink-3);margin-top:2px;">${familyLine}</div>`:''}
+      </div></div>
       <div class="person-right"><div class="ci-status ${overdue?'overdue':''}">${lastCI?'Last: '+lastCI:'No check-in yet'}${overdue?' ⚠':''}</div><div class="chevron" id="chev-pc-${t.id}">▼</div></div>
     </div>
     <div class="person-body" id="body-pc-${t.id}">
