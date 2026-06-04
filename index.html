@@ -616,7 +616,6 @@ const DEFAULT_PROJECTS = [
 const PC_TEAM = [
   { id:'t1', name:'Adam', title:'Partner Relationships Manager', team:'Partner Relations' },
   { id:'t2', name:'Malia', title:'Partner Administrator', team:'Partner Relations' },
-  { id:'t3', name:'Bonnie', title:'Support Staff (Part-Time)', team:'Partner Relations' },
   { id:'t4', name:'Kacie', title:'Editorial Writer', team:'Partner Communications' },
   { id:'t5', name:'Gabriel', title:'Social Media Manager', team:'Partner Communications' },
   { id:'t6', name:'Titus', title:'Media Specialist', team:'Partner Communications' },
@@ -629,7 +628,7 @@ const PC_TEAM = [
 const FULL_STAFF = [
   {id:'s1',name:'Bonnie Ames',spouse:'Timothy',children:[]},
   {id:'s2',name:'Ty Brogdon',spouse:'Lauren',children:['Mae','Kinsley']},
-  {id:'s3',name:'Adam Burrell',spouse:'Jessica',children:['Zoe','Belle','Lillian','Corban']},
+  {id:'s3',name:'Adam Burrell',spouse:'Jessica',children:['Zoe','Belle','Lillian','Corban','Gabriel','Josiah','Elena']},
   {id:'s4',name:'Ryan Bush',spouse:'Amanda',children:['Sophia','Samuel','Silas','Abigail']},
   {id:'s5',name:'Josh Coble',spouse:'Abi',children:['Hudson','Townsend','Eyan']},
   {id:'s6',name:'Kacie Crosswhite',spouse:'Cody',children:['Delano']},
@@ -650,7 +649,6 @@ const FULL_STAFF = [
   {id:'s21',name:'Jamey Tucker',spouse:'Jessica',children:['Malachi']},
   {id:'s22',name:'Titus Vaughan',spouse:'Ashley',children:[]},
   {id:'s23',name:'Paul Washer',spouse:'Charo',children:['Ian','Evan','Bronwyn']},
-  {id:'s24',name:'Gabriel Josiah',spouse:'',children:['Elena']},
 ];
 
 const CV_DATA = [
@@ -1159,35 +1157,34 @@ window.openPrayerModal = async () => {
 
   let html = '';
 
+  // Helper to build one prayer entry
+  function prayerEntry(name, title, spouse, kids, prayer) {
+    const kidsStr = Array.isArray(kids) ? kids.join(', ') : (kids||'');
+    const spouseStr = spouse||'';
+    return `<div class="prayer-entry">
+      <div class="pe-name">${name}${title?`<span style="font-size:12px;color:var(--ink-3);font-style:italic;font-weight:400;margin-left:8px;">${title}</span>`:''}</div>
+      ${spouseStr?`<div class="pe-family">Spouse: ${spouseStr}</div>`:''}
+      ${kidsStr?`<div class="pe-family">Children: ${kidsStr}</div>`:''}
+      <div class="${prayer?'pe-request':'pe-empty'}">${prayer||'No prayer request recorded yet.'}</div>
+    </div>`;
+  }
+
   // Partner Care team
   html += '<div class="pr-section-head">Partner Care Team</div>';
   PC_TEAM.forEach(t => {
     const td = S.teamData[t.id]||{};
-    const fam = [td.spouse?`Spouse: ${td.spouse}`:'', td.kids?`Children: ${td.kids}`:''].filter(Boolean).join(' · ');
-    html += `<div class="prayer-entry">
-      <div class="pe-name">${t.name}</div>
-      <div class="pe-title">${t.title}</div>
-      ${fam?`<div class="pe-family">${fam}</div>`:''}
-      <div class="${td.prayer?'pe-request':'pe-empty'}">${td.prayer||'No prayer request recorded yet.'}</div>
-    </div>`;
+    html += prayerEntry(t.name, t.title, td.spouse||'', td.kids||'', td.prayer||'');
   });
 
-  // Full staff with requests
-  const staffWithRequests = FULL_STAFF.filter(s=>{const sd=S.staffData[s.id]||{};return sd.prayer;});
-  if(staffWithRequests.length) {
-    html += '<div class="pr-section-head">HeartCry Staff</div>';
-    staffWithRequests.forEach(s => {
-      const sd = S.staffData[s.id]||{};
-      const spouse = sd.spouse||s.spouse||'';
-      const kids = sd.kids||(s.children||[]).join(', ');
-      const fam = [spouse?`Spouse: ${spouse}`:'', kids?`Children: ${kids}`:''].filter(Boolean).join(' · ');
-      html += `<div class="prayer-entry">
-        <div class="pe-name">${s.name}</div>
-        ${fam?`<div class="pe-family">${fam}</div>`:''}
-        <div class="pe-request">${sd.prayer}</div>
-      </div>`;
-    });
-  }
+  // Full HeartCry staff — show everyone, not just those with prayer requests
+  html += '<div class="pr-section-head">HeartCry Staff</div>';
+  FULL_STAFF.forEach(s => {
+    const sd = S.staffData[s.id]||{};
+    const spouse = sd.spouse !== undefined ? sd.spouse : (s.spouse||'');
+    const kids = sd.kids !== undefined ? sd.kids : (s.children||[]).join(', ');
+    const prayer = sd.prayer||'';
+    html += prayerEntry(sd.name||s.name, '', spouse, kids, prayer);
+  });
 
   // Prayer requests
   const activePR = (S.prayerRequests||[]).filter(pr=>!pr.prayed);
