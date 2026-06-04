@@ -532,6 +532,17 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 // ══════════════════════════════════════════
+// EARLY DECLARATIONS — must be before initApp
+// ══════════════════════════════════════════
+let uid = null;
+let unsubscribe = null;
+let S = {
+  weekOffset: 0, priorities: [], goals: [], projects: [],
+  teamData: {}, staffData: {}, prayerRequests: [],
+  cvIndex: 0, cvDates: {}, prayerDoneWeek: ''
+};
+
+// ══════════════════════════════════════════
 // SYNC INDICATOR
 // ══════════════════════════════════════════
 function setSyncing(state) {
@@ -654,20 +665,7 @@ const CV_DATA = [
 // ══════════════════════════════════════════
 // STATE
 // ══════════════════════════════════════════
-let uid = null;
-let S = {
-  weekOffset: 0,
-  priorities: [],
-  goals: JSON.parse(JSON.stringify(DEFAULT_GOALS)),
-  projects: JSON.parse(JSON.stringify(DEFAULT_PROJECTS)),
-  teamData: {},      // keyed by person id
-  staffData: {},     // keyed by staff id
-  prayerRequests: [],
-  cvIndex: 0,
-  cvDates: {},
-  prayerDoneWeek: '',
-};
-let unsubscribe = null;
+// (S initialized at bottom after defaults)
 
 function showLoadingOverlay(msg) {
   let el = document.getElementById("loading-overlay");
@@ -1277,6 +1275,9 @@ updateDate(); setInterval(updateDate,60000);
 // ══════════════════════════════════════════
 // INIT — must be last, after all functions defined
 // ══════════════════════════════════════════
+S.goals = JSON.parse(JSON.stringify(DEFAULT_GOALS));
+S.projects = JSON.parse(JSON.stringify(DEFAULT_PROJECTS));
+
 if(localStorage.getItem("hud_authed") === "yes") {
   document.getElementById("auth-screen").classList.add("hidden");
   document.getElementById("tb-user").textContent = "David Bishop";
