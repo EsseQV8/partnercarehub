@@ -658,14 +658,35 @@ let S = {
 };
 let unsubscribe = null;
 
+function showLoadingOverlay(msg) {
+  let el = document.getElementById("loading-overlay");
+  if(!el) {
+    el = document.createElement("div");
+    el.id = "loading-overlay";
+    el.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;";
+    el.innerHTML = '<div style="background:#fff;border-radius:12px;padding:28px 36px;text-align:center;max-width:340px;"><div style="font-family:var(--serif);font-size:18px;font-weight:700;color:var(--ink);margin-bottom:8px;">Loading your data...</div><div id="loading-msg" style="font-size:13px;color:var(--ink-3);"></div></div>';
+    document.body.appendChild(el);
+  }
+  document.getElementById("loading-msg").textContent = msg || "";
+}
+
+function hideLoadingOverlay() {
+  const el = document.getElementById("loading-overlay");
+  if(el) el.remove();
+}
+
 async function initApp(userId) {
   uid = userId;
   document.getElementById("tb-date").textContent = new Date().toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric",year:"numeric"});
 
-  // Listen to user doc in Firestore
+  showLoadingOverlay("Connecting to Firebase...");
+
   const userRef = doc(db, "users", uid, "hud", "state");
   if(unsubscribe) unsubscribe();
-  unsubscribe = onSnapshot(userRef, snap => {
+
+  let firstLoad = true;
+
+  unsubscribe = onSnapshot(userRef, (snap) => {
     if(snap.exists()) {
       const data = snap.data();
       if(data.goals) S.goals = data.goals;
@@ -679,14 +700,61 @@ async function initApp(userId) {
       if(data.prayerDoneWeek) S.prayerDoneWeek = data.prayerDoneWeek;
       if(typeof data.weekOffset === 'number') S.weekOffset = data.weekOffset;
     }
+    if(firstLoad) {
+      firstLoad = false;
+      hideLoadingOverlay();
+      setSyncing('synced');
+      setTimeout(()=>setSyncing(''), 2000);
+    }
+    renderAll();
+  }, (error) => {
+    hideLoadingOverlay();
+    console.error("Firebase error:", error);
+    // Show error to user
+    let errEl = document.getElementById("firebase-err");
+    if(!errEl) {
+      errEl = document.createElement("div");
+      errEl.id = "firebase-err";
+      errEl.style.cssText = "position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#a32d2d;color:#fff;padding:12px 20px;border-radius:8px;font-size:13px;z-index:500;max-width:440px;text-align:center;";
+      document.body.appendChild(errEl);
+    }
+    errEl.textContent = "Firebase sync error: " + error.message + ". Data shown may not be saved.";
+    // Still render with whatever state we have
     renderAll();
   });
+
+  // Timeout safety — if Firebase doesn't respond in 8 seconds, render defaults
+  setTimeout(() => {
+    if(firstLoad) {
+      firstLoad = false;
+      hideLoadingOverlay();
+      renderAll();
+    }
+  }, 8000);
 }
 
 async function saveState() {
   if(!uid) return;
-  const userRef = doc(db, "users", uid, "hud", "state");
-  await setDoc(userRef, S, { merge: true });
+  try {
+    const userRef = doc(db, "users", uid, "hud", "state");
+    setSyncing('syncing');
+    await setDoc(userRef, S, { merge: true });
+    setSyncing('synced');
+    setTimeout(()=>setSyncing(''), 2000);
+  } catch(e) {
+    setSyncing('');
+    console.error("Save failed:", e);
+    // Show brief error
+    let errEl = document.getElementById("firebase-err");
+    if(!errEl) {
+      errEl = document.createElement("div");
+      errEl.id = "firebase-err";
+      errEl.style.cssText = "position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#a32d2d;color:#fff;padding:12px 20px;border-radius:8px;font-size:13px;z-index:500;";
+      document.body.appendChild(errEl);
+    }
+    errEl.textContent = "Save failed — check your internet connection.";
+    setTimeout(()=>{ if(errEl.parentNode) errEl.remove(); }, 5000);
+  }
 }
 
 // ══════════════════════════════════════════
