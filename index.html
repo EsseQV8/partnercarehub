@@ -614,42 +614,35 @@ const DEFAULT_PROJECTS = [
 ];
 
 const PC_TEAM = [
-  { id:'t1', name:'Adam', fullName:'Adam Burrell', staffId:'s3', title:'Partner Relationships Manager', team:'Partner Relations' },
-  { id:'t2', name:'Malia', fullName:'Malia Bishop', staffId:'s_malia', title:'Partner Administrator', team:'Partner Relations' },
-  { id:'t4', name:'Kacie', fullName:'Kacie Crosswhite', staffId:'s6', title:'Editorial Writer', team:'Partner Communications' },
-  { id:'t5', name:'Gabriel', fullName:'Gabriel Igarashi', staffId:'s14', title:'Social Media Manager', team:'Partner Communications' },
-  { id:'t6', name:'Titus', fullName:'Titus Vaughan', staffId:'s22', title:'Media Specialist', team:'Partner Communications' },
-  { id:'t7', name:'Chris', fullName:'Chris Hernandez', staffId:'s12', title:'Filmmaker', team:'Partner Communications' },
-  { id:'t8', name:'Jared', fullName:'Jared Hall', staffId:'s11', title:'Filmmaker / Designer', team:'Partner Communications' },
-  { id:'t9', name:'Silas', fullName:'Silas Jacks', staffId:'s_silas', title:'Film Assistant', team:'Partner Communications' },
-  { id:'t10', name:'JJ', fullName:'JJ John', staffId:'s15', title:'Support Assistant', team:'Partner Communications' },
+  { id:'t1', name:'Adam', title:'Partner Relationships Manager', team:'Partner Relations', spouse:'Jessica', children:['Zoe','Belle','Lillian','Corban','Gabriel','Josiah','Elena'] },
+  { id:'t2', name:'Malia', title:'Partner Administrator', team:'Partner Relations', spouse:'David Bishop', children:['Zebulun','Gabriel','Isabella','Josiah'] },
+  { id:'t4', name:'Kacie', title:'Editorial Writer', team:'Partner Communications', spouse:'Cody', children:['Delano'] },
+  { id:'t5', name:'Gabriel', title:'Social Media Manager', team:'Partner Communications', spouse:'Sumaia', children:['Arthur','Josiah'] },
+  { id:'t6', name:'Titus', title:'Media Specialist', team:'Partner Communications', spouse:'Ashley', children:[] },
+  { id:'t7', name:'Chris', title:'Filmmaker', team:'Partner Communications', spouse:'Natalie', children:['Isabella','Eowyn','Elora','Josiah'] },
+  { id:'t8', name:'Jared', title:'Filmmaker / Designer', team:'Partner Communications', spouse:'Jessica', children:['Audrey','Lillian','Edmund','Josiah','Elena'] },
+  { id:'t9', name:'Silas', title:'Film Assistant', team:'Partner Communications', spouse:'', children:[] },
+  { id:'t10', name:'JJ', title:'Support Assistant', team:'Partner Communications', spouse:'Holyn Flanders (Fiancée)', children:[] },
 ];
 
+// FULL_STAFF = everyone NOT on PC_TEAM
 const FULL_STAFF = [
   {id:'s_david',name:'David Bishop',spouse:'Malia',children:['Zebulun','Gabriel','Isabella','Josiah']},
-  {id:'s_malia',name:'Malia Bishop',spouse:'David Bishop',children:['Zebulun','Gabriel','Isabella','Josiah']},
-  {id:'s_silas',name:'Silas Jacks',spouse:'',children:[]},
+  {id:'s1',name:'Bonnie Ames',spouse:'Timothy',children:[]},
   {id:'s2',name:'Ty Brogdon',spouse:'Lauren',children:['Mae','Kinsley']},
-  {id:'s3',name:'Adam Burrell',spouse:'Jessica',children:['Zoe','Belle','Lillian','Corban','Gabriel','Josiah','Elena']},
   {id:'s4',name:'Ryan Bush',spouse:'Amanda',children:['Sophia','Samuel','Silas','Abigail']},
   {id:'s5',name:'Josh Coble',spouse:'Abi',children:['Hudson','Townsend','Eyan']},
-  {id:'s6',name:'Kacie Crosswhite',spouse:'Cody',children:['Delano']},
   {id:'s7',name:'Don Currin',spouse:'Cindy',children:[]},
   {id:'s8',name:'Daniel Doan',spouse:'Cassandra',children:['Lydia','Micaiah','Ida']},
   {id:'s9',name:'Dirk Erasmus',spouse:'Riëtte',children:['Jacobus','Christiaan']},
   {id:'s10',name:'Hunter Gately',spouse:'Leighton',children:['Truett','Dawson']},
-  {id:'s11',name:'Jared Hall',spouse:'Jessica',children:['Audrey','Lillian','Edmund','Josiah','Elena']},
-  {id:'s12',name:'Chris Hernandez',spouse:'Natalie',children:['Isabella','Eowyn','Elora','Josiah']},
   {id:'s13',name:'Jose Hernandez',spouse:'Christine',children:['Caleb','Watson','Gideon','Josiah','Abigail']},
-  {id:'s14',name:'Gabriel Igarashi',spouse:'Sumaia',children:['Arthur','Josiah']},
-  {id:'s15',name:'JJ John',spouse:'Holyn Flanders (Fiancée)',children:[]},
   {id:'s16',name:'Ben Lane',spouse:'Sarah',children:['Josiah','Abi','Sophia','Simeon','Seth']},
   {id:'s17',name:'Jimmy Li',spouse:'Nancy',children:['Rebecca','Hannah']},
   {id:'s18',name:'Delano Rolle',spouse:'Demi',children:[]},
   {id:'s19',name:'Robert Rogers',spouse:'McKenzie',children:['Emery','Elias']},
   {id:'s20',name:'Jeff Shawver',spouse:'Jennifer',children:['Brahm','Avery','Mya','Avigail','Jamey']},
   {id:'s21',name:'Jamey Tucker',spouse:'Jessica',children:['Malachi']},
-  {id:'s22',name:'Titus Vaughan',spouse:'Ashley',children:[]},
   {id:'s23',name:'Paul Washer',spouse:'Charo',children:['Ian','Evan','Bronwyn']},
 ];
 
@@ -1157,17 +1150,14 @@ window.openPrayerModal = async () => {
   S.prayerDoneWeek = wk;
   await saveState();
 
-  const shownStaffIds = new Set();
+  let html = '';
 
-  function entryForPCMember(t) {
+  // PC team member entry — family from PC_TEAM defaults, overridden by anything entered in teamData
+  function pcEntry(t) {
     const td = S.teamData[t.id] || {};
-    // Get family from FULL_STAFF via staffId, overridden by anything entered in teamData
-    const staffRecord = t.staffId ? FULL_STAFF.find(s => s.id === t.staffId) : null;
-    const sd = staffRecord ? (S.staffData[staffRecord.id] || {}) : {};
-    const spouse = td.spouse || sd.spouse || (staffRecord ? staffRecord.spouse : '') || '';
-    const kids = td.kids || sd.kids || (staffRecord ? (staffRecord.children || []).join(', ') : '') || '';
-    const prayer = td.prayer || sd.prayer || '';
-    if(staffRecord) shownStaffIds.add(staffRecord.id);
+    const spouse = td.spouse !== undefined && td.spouse !== '' ? td.spouse : (t.spouse || '');
+    const kids = td.kids !== undefined && td.kids !== '' ? td.kids : (t.children || []).join(', ');
+    const prayer = td.prayer || '';
     return `<div class="prayer-entry">
       <div class="pe-name">${t.name} <span style="font-size:11px;color:var(--ink-3);font-style:italic;font-weight:400;margin-left:6px;">${t.title}</span></div>
       ${spouse ? `<div class="pe-family"><strong>Spouse:</strong> ${spouse}</div>` : ''}
@@ -1176,10 +1166,11 @@ window.openPrayerModal = async () => {
     </div>`;
   }
 
-  function entryForStaff(s) {
+  // Staff entry — family from FULL_STAFF defaults, overridden by staffData
+  function staffEntry(s) {
     const sd = S.staffData[s.id] || {};
-    const spouse = sd.spouse !== undefined ? sd.spouse : (s.spouse || '');
-    const kids = sd.kids !== undefined ? sd.kids : (s.children || []).join(', ');
+    const spouse = sd.spouse !== undefined && sd.spouse !== '' ? sd.spouse : (s.spouse || '');
+    const kids = sd.kids !== undefined && sd.kids !== '' ? sd.kids : (s.children || []).join(', ');
     const prayer = sd.prayer || '';
     const name = sd.name || s.name;
     return `<div class="prayer-entry">
@@ -1190,16 +1181,14 @@ window.openPrayerModal = async () => {
     </div>`;
   }
 
-  let html = '';
-
   html += '<div class="pr-section-head">Partner Relations</div>';
-  PC_TEAM.filter(t => t.team === 'Partner Relations').forEach(t => { html += entryForPCMember(t); });
+  PC_TEAM.filter(t => t.team === 'Partner Relations').forEach(t => { html += pcEntry(t); });
 
   html += '<div class="pr-section-head">Partner Communications</div>';
-  PC_TEAM.filter(t => t.team === 'Partner Communications').forEach(t => { html += entryForPCMember(t); });
+  PC_TEAM.filter(t => t.team === 'Partner Communications').forEach(t => { html += pcEntry(t); });
 
   html += '<div class="pr-section-head">Staff</div>';
-  FULL_STAFF.filter(s => !shownStaffIds.has(s.id)).forEach(s => { html += entryForStaff(s); });
+  FULL_STAFF.forEach(s => { html += staffEntry(s); });
 
   const activePR = (S.prayerRequests || []).filter(pr => !pr.prayed);
   if(activePR.length) {
