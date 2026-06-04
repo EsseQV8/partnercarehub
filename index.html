@@ -532,6 +532,24 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 // ══════════════════════════════════════════
+// SYNC INDICATOR
+// ══════════════════════════════════════════
+function setSyncing(state) {
+  const dot = document.getElementById("sync-dot");
+  if(!dot) return;
+  dot.className = "sync-dot" + (state ? " " + state : "");
+  // Also show text status so it's visible
+  let lbl = document.getElementById("sync-label");
+  if(!lbl) {
+    lbl = document.createElement("span");
+    lbl.id = "sync-label";
+    lbl.style.cssText = "font-family:var(--mono);font-size:10px;color:#666;";
+    dot.parentNode.insertBefore(lbl, dot.nextSibling);
+  }
+  lbl.textContent = state === 'syncing' ? 'Saving...' : state === 'synced' ? 'Saved ✓' : '';
+}
+
+// ══════════════════════════════════════════
 // AUTH — Password
 // ══════════════════════════════════════════
 const HUD_PASSWORD = "HMS*managerHUD$8";
