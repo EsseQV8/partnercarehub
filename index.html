@@ -577,13 +577,6 @@ window.signOut = () => {
   document.getElementById("pw-input").value = "";
 };
 
-// Check if already authenticated
-if(localStorage.getItem("hud_authed") === "yes") {
-  document.getElementById("auth-screen").classList.add("hidden");
-  document.getElementById("tb-user").textContent = "David Bishop";
-  initApp(FIXED_UID);
-}
-
 // ══════════════════════════════════════════
 // DATA DEFAULTS
 // ══════════════════════════════════════════
@@ -1280,6 +1273,15 @@ function updateDate(){
   document.getElementById("tb-date").textContent=new Date().toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric",year:"numeric"});
 }
 updateDate(); setInterval(updateDate,60000);
+
+// ══════════════════════════════════════════
+// INIT — must be last, after all functions defined
+// ══════════════════════════════════════════
+if(localStorage.getItem("hud_authed") === "yes") {
+  document.getElementById("auth-screen").classList.add("hidden");
+  document.getElementById("tb-user").textContent = "David Bishop";
+  initApp(FIXED_UID);
+}
 </script>
 </body>
 </html>
